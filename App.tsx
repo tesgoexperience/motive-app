@@ -1,34 +1,48 @@
 import React, { Component } from 'react';
 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from './navigation/RootStackParams';
-import { setItemAsync, getItemAsync } from 'expo-secure-store';
-
+import { setItemAsync, getItemAsync, deleteItemAsync } from 'expo-secure-store';
+import { AuthUtils, User, ResponseType } from './Api'
 const Stack = createNativeStackNavigator<RootStackParams>();
 
 type MyState = {
     loading: boolean,
-    userDetails: any
+    userDetails: User | null,
+    authenticated: boolean
 };
 
+type MyProps = {
+    navigation: NativeStackNavigationProp<RootStackParams, "Home">;
+  };
 class App extends Component<{}, MyState>{
 
-    state: MyState = { loading: true, userDetails: null };
+    state: MyState = { loading: true, userDetails: null, authenticated: false };
 
     public componentDidMount() {
+        deleteItemAsync("user");
+        AuthUtils.attemptAuthentication().then(res => {
+            if (res == ResponseType.OK) {
 
-        getItemAsync("user").then((e) => {
-            this.setState({ loading: false, userDetails: e });
-        }).catch(e => {
-            console.log(e);
-            this.setState({ loading: false, userDetails: null });
-        });
+                // since they are logged in, get their user details
+                AuthUtils.getStoredUser().then(user => {
+                    this.setState({ loading: false, userDetails: user, authenticated: true });
+                })
+
+            } else {
+                this.setState({ loading: false });
+            }
+        }
+        ).catch(err => {
+            this.setState({ loading: false });
+        })
+
     }
     public render() {
 
@@ -38,22 +52,31 @@ class App extends Component<{}, MyState>{
             </View>
         }
 
-        if (!this.state.userDetails) {
+        if (!this.state.authenticated) {
             return (
                 <View style={styles.container}>
-                    <NavigationContainer>
+                    {/* <ScrollView>  */}
+                    <NavigationContainer independent={true}>
                         <Stack.Navigator initialRouteName='Home' screenOptions={{
                             headerShown: false,
                             header: () => null,
                             contentStyle: { backgroundColor: 'white' },
+                            
                         }}>
+                              <Stack.Screen  name="Login" component={Login}/>
                             <Stack.Screen name="Register" component={Register} />
-                            <Stack.Screen name="Login" component={Login} />
                         </Stack.Navigator>
                     </NavigationContainer>
+                    {/* </ScrollView> */}
                 </View>
+
             );
+        }else {
+            return <View style={styles.container}>
+            <Text style={{ textAlign: 'center' }}> Success </Text>
+        </View>
         }
+       
     }
 }
 
@@ -62,10 +85,8 @@ export default App;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        margin: "10%",
-        marginTop: "50%",
         backgroundColor: '#FFFFF',
         content: 'center',
-        color: "#1A1A0F"
-    },
+        color: "#1A1A0F",
+    }
 });

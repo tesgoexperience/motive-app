@@ -16,51 +16,66 @@ import {
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../navigation/RootStackParams";
+import { AuthUtils, ResponseType, User } from "../Api"
+// interface Styles {
+//   header: TextStyle;
+//   input: TextStyle;
+//   hint: TextStyle;
+//   button: TextStyle;
+//   view: ViewStyle;
+//   registerBUtton: TextStyle;
+// }
 
-interface Styles {
-  header: TextStyle;
-  input: TextStyle;
-  hint: TextStyle;
-  button: TextStyle;
-  view: ViewStyle;
-  registerBUtton: TextStyle;
-}
-
-type MyState = {
-  email: string;
-  password: string;
-};
+import RNRestart from 'react-native-restart';
+import App from "../App";
 
 type MyProps = {
   navigation: NativeStackNavigationProp<RootStackParams, "Login">;
 };
 
+type MyState = { 
+  user : User,
+  success: boolean
+}
 class Login extends Component<MyProps, MyState> {
-  
-  state: MyState = { email: "", password: "" };
+
+  state: MyState = { user : { email: "", password: ""}, success : false };
 
   private loginPressed = (e: GestureResponderEvent): void => {
-    alert(this.state.email + " - " + this.state.password);
-    this.setState({ email: "hello" });
+    // Alert.alert(this.state.email);
+    
+    AuthUtils.attemptAuthentication(this.state.user).then(res => {
+      if (res == ResponseType.OK) {
+        this.setState({success : true})
+      }
+      else if (res == ResponseType.INVALID_CREDENTIALS) {
+        Alert.alert("Invalid email/password");
+      } else {
+        Alert.alert("Unknown error ocurred");
+      }
+    })
   };
 
   public render() {
+    if (this.state.success) {
+      return <App/>;      
+    }
+
     return (
+
       <View style={styles.view}>
         <Text style={styles.header}> LOGIN </Text>
         <View>
           <TextInput
             style={styles.input}
-            onChange={(e) => {
-              this.state.email = e.nativeEvent.text;
-            }}
+            onChange={(e) => { this.setState({ user : {...this.state.user, email: e.nativeEvent.text}  }) }}
             placeholder='Enter Email'
           />
           <TextInput
             style={styles.input}
             secureTextEntry={true}
             onChange={(e) => {
-              this.state.password = e.nativeEvent.text;
+              this.setState({ user : {...this.state.user, password: e.nativeEvent.text} })
             }}
             placeholder='Enter Password'
           />
@@ -84,13 +99,14 @@ class Login extends Component<MyProps, MyState> {
 
 export default Login;
 
-const styles = StyleSheet.create<Styles>({
+const styles = StyleSheet.create({
   header: {
     color: "#1A1A0F",
     textAlign: "center",
     fontSize: 30,
     paddingBottom: 10,
     marginBottom: 10,
+    marginTop: 20
   },
   hint: {
     color: "#74776B",

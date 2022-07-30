@@ -11,7 +11,13 @@
       "cwd": "${workspaceFolder}",
       "platform": "exponent",
       "expoHostType": "lan",
-      "enableDebug": true
+      "enableDebug": true,
+      "skipFiles": [
+        "node_modules/**",
+      ],
+      "openExpoQR": false, 
+      
+      
     }
   ]
 }
