@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { TextInput, Text, View, StyleSheet, TextStyle, ViewStyle, TouchableOpacity, GestureResponderEvent, ScrollView } from 'react-native';
+import { TextInput, Text, View, StyleSheet, TouchableOpacity, GestureResponderEvent, ScrollView, Alert } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../navigation/RootStackParams';
 import Api from '../util/Api'
-import AuthUtil, {ResponseType, User} from '../util/AuthUtils'
+import { ResponseType, User } from '../util/AuthUtils'
 import { AuthError } from '../util/Errors';
 import App from '../App';
 import AuthUtils from '../util/AuthUtils';
-
+import { Loading } from '../util/Loading';
+import { AxiosError } from 'axios';
 enum FIELDS {
     EMAIL,
     PASSWORD,
@@ -35,17 +36,8 @@ class Register extends Component<MyProps, MyState>{
 
     state: MyState = { user: { username: "", password: "", email: "" }, confirmPassword: "", errors: new Array(), loading: false, finished: false };
     private readonly POST_REGISTRATION_AUTH_FAILED: string = "Post registration login attempt failed.";
-
-    private addError(f: FIELDS): void {
-
-        if (this.state.errors.includes(f))
-            return;
-
-        let errs = this.state.errors;
-
-        errs.push(f);
-        this.setState({ errors: errs });
-    }
+    private readonly UNKNOWN_REGISTRATION_ERROR: string = "Registration failed for an unknown error.";
+    private readonly UNKNOWN_REGISTRATION_SERVER_ERROR: string = "Unknown server error during registration";
 
     private registerPressed = (e: GestureResponderEvent): void => {
 
@@ -90,7 +82,16 @@ class Register extends Component<MyProps, MyState>{
                 })
             }).catch(err => {
                 this.setState({ loading: false });
-                //TODO email already being used error
+                if (err instanceof AxiosError) {
+                    if (err.response?.status == 409 || err.response?.data == 'User already exists') {
+                        Alert.alert('Email is already registered. Login Instead. ');
+                    } else {
+                        throw new AuthError(this.UNKNOWN_REGISTRATION_SERVER_ERROR);
+
+                    }
+                } else {
+                    throw new AuthError(this.UNKNOWN_REGISTRATION_ERROR);
+                }
             });
 
         } else {
@@ -111,9 +112,7 @@ class Register extends Component<MyProps, MyState>{
         }
 
         if (this.state.loading) {
-            return <ScrollView style={styles.view}>
-                <Text style={styles.header}> Loading </Text>
-            </ScrollView>
+            return <Loading />
         }
 
         return (

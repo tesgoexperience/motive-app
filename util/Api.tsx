@@ -1,14 +1,12 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { setItemAsync, deleteItemAsync, getItemAsync } from 'expo-secure-store';
-import { Alert } from "react-native";
-import { AuthError } from "./Errors";
+import axios from "axios";
+
 import AuthUtils, {ResponseType, User} from '../util/AuthUtils'
 
 // TODO move to environment variable
-const apiURL = "http://192.168.0.41:8080"
+export const API_URL = "http://192.168.30.18:8080"
 
 const Api = axios.create({
-    baseURL: apiURL
+    baseURL: API_URL
 })
 
 /**

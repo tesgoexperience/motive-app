@@ -1,17 +1,11 @@
 import React, { Component } from "react";
 import {
   Alert,
-  Button,
   TextInput,
   Text,
   View,
   StyleSheet,
-  ImageStyle,
-  TextStyle,
-  ViewStyle,
   TouchableOpacity,
-  NativeSyntheticEvent,
-  TextInputChangeEventData,
   GestureResponderEvent,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -20,6 +14,7 @@ import { RootStackParams } from "../navigation/RootStackParams";
 import RNRestart from 'react-native-restart';
 import App from "../App";
 import AuthUtils, { ResponseType, User } from "../util/AuthUtils";
+import { Loading } from "../util/Loading";
 
 type MyProps = {
   navigation: NativeStackNavigationProp<RootStackParams, "Login">;
@@ -27,15 +22,19 @@ type MyProps = {
 
 type MyState = {
   user: User,
-  success: boolean
+  success: boolean,
+  loading: boolean
 }
 class Login extends Component<MyProps, MyState> {
 
-  state: MyState = { user: { email: "", password: "", accessToken: "" }, success: false };
+  state: MyState = { user: { email: "", password: "", accessToken: "" }, success: false, loading: false };
 
   private loginPressed = (e: GestureResponderEvent): void => {
+    this.setState({ loading: true })
 
     AuthUtils.attemptAuthentication(this.state.user).then(res => {
+      this.setState({ loading: false })
+
       if (res == ResponseType.OK) {
         this.setState({ success: true })
       }
@@ -49,12 +48,16 @@ class Login extends Component<MyProps, MyState> {
   };
 
   public render() {
+
+    if (this.state.loading) {
+      return <Loading />
+    }
+
     if (this.state.success) {
       return <App />;
     }
 
     return (
-
       <View style={styles.view}>
         <Text style={styles.header}> LOGIN </Text>
         <View>
@@ -131,7 +134,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#88c6e3",
   },
   view: {
-    padding: 10,
-    // paddingTop: 0
+    padding: 10
   },
 });

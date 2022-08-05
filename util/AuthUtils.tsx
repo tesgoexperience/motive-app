@@ -1,5 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { setItemAsync, deleteItemAsync, getItemAsync } from 'expo-secure-store';
+import { Alert } from "react-native";
+import { API_URL } from "./Api";
 import { AuthError } from "./Errors";
 
 export type User = {
@@ -22,9 +24,10 @@ export enum ResponseType {
 
 export default class AuthUtils {
 
-    public static readonly USER_STORAGE_KEY = "user";
+    public static readonly USER_STORAGE_KEY = "USER";
     public static readonly AUTH_STORE_ERROR_MSG = "No user authentication is stored"
     public static readonly AUTH_STORE_MISSING_FIELDS_ERROR_MSG = "Stored user is missing fields"
+
 
     // TODO getting the user from the drive every time might cause performance issues, consider a private class variable 
     public static async getStoredUser(): Promise<User> {
@@ -57,7 +60,7 @@ export default class AuthUtils {
         // check if the access token is valid
         try {
 
-            let res = await axios.get('http://192.168.0.41:8080/user/', { headers: { "Authorization": token } });
+            let res = await axios.get(API_URL + '/user/', { headers: { "Authorization": token } });
 
             return true;
 
@@ -67,8 +70,6 @@ export default class AuthUtils {
             //TODO clear the stored user and redirect the user to the login page 
             return false;
         }
-
-
     }
 
     /**
@@ -89,10 +90,10 @@ export default class AuthUtils {
             }
         }
 
-        if (!this.checkTokenValidity(user.accessToken)) {
+        if (! await this.checkTokenValidity(user.accessToken)) {
             try {
 
-                let res = await axios.post('http://192.168.0.41:8080/user/login', { email: user.email, password: user.password })
+                let res = await axios.post(API_URL + '/user/login', { email: user.email, password: user.password })
 
                 //update the access tokens with the new info
                 user.accessToken = res.data;
