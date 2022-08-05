@@ -9,7 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from './navigation/RootStackParams';
 import { setItemAsync, getItemAsync, deleteItemAsync } from 'expo-secure-store';
-import { AuthUtils, User, ResponseType } from './Api'
+import AuthUtils, {ResponseType, User} from './util/AuthUtils'
 const Stack = createNativeStackNavigator<RootStackParams>();
 
 type MyState = {
@@ -26,7 +26,6 @@ class App extends Component<{}, MyState>{
     state: MyState = { loading: true, userDetails: null, authenticated: false };
 
     public componentDidMount() {
-        deleteItemAsync("user");
         AuthUtils.attemptAuthentication().then(res => {
             if (res == ResponseType.OK) {
 

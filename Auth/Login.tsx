@@ -16,37 +16,28 @@ import {
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../navigation/RootStackParams";
-import { AuthUtils, ResponseType, User } from "../Api"
-// interface Styles {
-//   header: TextStyle;
-//   input: TextStyle;
-//   hint: TextStyle;
-//   button: TextStyle;
-//   view: ViewStyle;
-//   registerBUtton: TextStyle;
-// }
 
 import RNRestart from 'react-native-restart';
 import App from "../App";
+import AuthUtils, { ResponseType, User } from "../util/AuthUtils";
 
 type MyProps = {
   navigation: NativeStackNavigationProp<RootStackParams, "Login">;
 };
 
-type MyState = { 
-  user : User,
+type MyState = {
+  user: User,
   success: boolean
 }
 class Login extends Component<MyProps, MyState> {
 
-  state: MyState = { user : { email: "", password: ""}, success : false };
+  state: MyState = { user: { email: "", password: "", accessToken: "" }, success: false };
 
   private loginPressed = (e: GestureResponderEvent): void => {
-    // Alert.alert(this.state.email);
-    
+
     AuthUtils.attemptAuthentication(this.state.user).then(res => {
       if (res == ResponseType.OK) {
-        this.setState({success : true})
+        this.setState({ success: true })
       }
       else if (res == ResponseType.INVALID_CREDENTIALS) {
         Alert.alert("Invalid email/password");
@@ -54,11 +45,12 @@ class Login extends Component<MyProps, MyState> {
         Alert.alert("Unknown error ocurred");
       }
     })
+
   };
 
   public render() {
     if (this.state.success) {
-      return <App/>;      
+      return <App />;
     }
 
     return (
@@ -68,14 +60,14 @@ class Login extends Component<MyProps, MyState> {
         <View>
           <TextInput
             style={styles.input}
-            onChange={(e) => { this.setState({ user : {...this.state.user, email: e.nativeEvent.text}  }) }}
+            onChange={(e) => { this.setState({ user: { ...this.state.user, email: e.nativeEvent.text } }) }}
             placeholder='Enter Email'
           />
           <TextInput
             style={styles.input}
             secureTextEntry={true}
             onChange={(e) => {
-              this.setState({ user : {...this.state.user, password: e.nativeEvent.text} })
+              this.setState({ user: { ...this.state.user, password: e.nativeEvent.text } })
             }}
             placeholder='Enter Password'
           />

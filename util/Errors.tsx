@@ -1,4 +1,6 @@
-import { Alert } from "react-native";
+import { logger } from "react-native-logs";
+
+const log = logger.createLogger();
 
 abstract class LoggableError extends Error {
     /**
@@ -6,8 +8,8 @@ abstract class LoggableError extends Error {
      */
     constructor(msg: string) {
         super(msg);
+        log.error(msg);
         
-        //TODO log this error
     }
 }
 
@@ -15,6 +17,5 @@ export class AuthError extends LoggableError {
     constructor(msg: string) {
         super(msg);
 
-        // log this error
     }
 }
