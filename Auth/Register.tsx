@@ -5,7 +5,6 @@ import { RootStackParams } from '../navigation/RootStackParams';
 import Api from '../util/Api'
 import { ResponseType, User } from '../util/AuthUtils'
 import { AuthError } from '../util/Errors';
-import App from '../App';
 import AuthUtils from '../util/AuthUtils';
 import { Loading } from '../util/Loading';
 import { AxiosError } from 'axios';
@@ -24,17 +23,17 @@ type MyState = {
     },
     confirmPassword: string,
     errors: Array<FIELDS>,
-    loading: boolean,
-    finished: boolean
+    loading: boolean
 };
 
 type MyProps = {
-    navigation: NativeStackNavigationProp<RootStackParams, 'Login'>
+    navigation: NativeStackNavigationProp<RootStackParams, 'Login'>,
+    reauthenticateApp: any
 };
 
 class Register extends Component<MyProps, MyState>{
 
-    state: MyState = { user: { username: "", password: "", email: "" }, confirmPassword: "", errors: new Array(), loading: false, finished: false };
+    state: MyState = { user: { username: "", password: "", email: "" }, confirmPassword: "", errors: new Array(), loading: false};
     private readonly POST_REGISTRATION_AUTH_FAILED: string = "Post registration login attempt failed.";
     private readonly UNKNOWN_REGISTRATION_ERROR: string = "Registration failed for an unknown error.";
     private readonly UNKNOWN_REGISTRATION_SERVER_ERROR: string = "Unknown server error during registration";
@@ -74,7 +73,7 @@ class Register extends Component<MyProps, MyState>{
                 let user: User = { email: this.state.user.email, password: this.state.user.password, accessToken: "" }
                 AuthUtils.attemptAuthentication(user).then(res => {
                     if (res == ResponseType.OK) {
-                        this.setState({ finished: true })
+                        this.props.reauthenticateApp();
                     }
                     else {
                         throw new AuthError(this.POST_REGISTRATION_AUTH_FAILED);
@@ -86,6 +85,8 @@ class Register extends Component<MyProps, MyState>{
                     if (err.response?.status == 409 || err.response?.data == 'User already exists') {
                         Alert.alert('Email is already registered. Login Instead. ');
                     } else {
+                        Alert.alert(this.UNKNOWN_REGISTRATION_SERVER_ERROR);
+
                         throw new AuthError(this.UNKNOWN_REGISTRATION_SERVER_ERROR);
 
                     }
@@ -106,10 +107,6 @@ class Register extends Component<MyProps, MyState>{
     }
 
     public render() {
-
-        if (this.state.finished) {
-            return <App />;
-        }
 
         if (this.state.loading) {
             return <Loading />

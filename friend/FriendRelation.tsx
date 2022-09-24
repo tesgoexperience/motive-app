@@ -1,0 +1,8 @@
+enum FRIEND_RELATION {
+    FRIEND,
+    REQUESTED_BY_YOU,
+    REQUESTED_BY_THEM,
+    NO_RELATION
+}
+
+export default FRIEND_RELATION;
