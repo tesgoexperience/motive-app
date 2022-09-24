@@ -11,23 +11,21 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../navigation/RootStackParams";
 
-import RNRestart from 'react-native-restart';
-import App from "../App";
 import AuthUtils, { ResponseType, User } from "../util/AuthUtils";
 import { Loading } from "../util/Loading";
 
 type MyProps = {
-  navigation: NativeStackNavigationProp<RootStackParams, "Login">;
+  navigation: NativeStackNavigationProp<RootStackParams, "Login">,
+  reauthenticateApp: any
 };
 
 type MyState = {
   user: User,
-  success: boolean,
   loading: boolean
 }
 class Login extends Component<MyProps, MyState> {
 
-  state: MyState = { user: { email: "", password: "", accessToken: "" }, success: false, loading: false };
+  state: MyState = { user: { email: "", password: "", accessToken: "" }, loading: false };
 
   private loginPressed = (e: GestureResponderEvent): void => {
     this.setState({ loading: true })
@@ -36,7 +34,7 @@ class Login extends Component<MyProps, MyState> {
       this.setState({ loading: false })
 
       if (res == ResponseType.OK) {
-        this.setState({ success: true })
+        this.props.reauthenticateApp();
       }
       else if (res == ResponseType.INVALID_CREDENTIALS) {
         Alert.alert("Invalid email/password");
@@ -51,10 +49,6 @@ class Login extends Component<MyProps, MyState> {
 
     if (this.state.loading) {
       return <Loading />
-    }
-
-    if (this.state.success) {
-      return <App />;
     }
 
     return (

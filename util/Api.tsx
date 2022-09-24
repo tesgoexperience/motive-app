@@ -1,17 +1,17 @@
 import axios from "axios";
 
-import AuthUtils, {ResponseType, User} from '../util/AuthUtils'
+import AuthUtils, {ResponseType, User} from './AuthUtils'
 
-// TODO move to environment variable
-export const API_URL = "http://192.168.30.18:8080"
+const API_URL = process.env.REST_API;
 
 const Api = axios.create({
     baseURL: API_URL
 })
 
 /**
+ *
  * Attaches access token to every request
- * 
+ *
  */
 Api.interceptors.request.use(async req => {
 
@@ -27,6 +27,7 @@ Api.interceptors.request.use(async req => {
         req.headers.authorization = user.accessToken;
     }
 
+    return req;
 
 });
 

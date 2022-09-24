@@ -1,7 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { setItemAsync, deleteItemAsync, getItemAsync } from 'expo-secure-store';
-import { Alert } from "react-native";
-import { API_URL } from "./Api";
 import { AuthError } from "./Errors";
 
 export type User = {
@@ -21,6 +19,7 @@ export enum ResponseType {
     NO_CREDENTIALS
 }
 
+const API_URL = process.env.REST_API;
 
 export default class AuthUtils {
 
@@ -29,7 +28,7 @@ export default class AuthUtils {
     public static readonly AUTH_STORE_MISSING_FIELDS_ERROR_MSG = "Stored user is missing fields"
 
 
-    // TODO getting the user from the drive every time might cause performance issues, consider a private class variable 
+    // TODO getting the user from the drive every time might cause performance issues, consider a private class variable
     public static async getStoredUser(): Promise<User> {
 
         let strUser = await getItemAsync(AuthUtils.USER_STORAGE_KEY);
@@ -46,6 +45,14 @@ export default class AuthUtils {
         }
 
         return user;
+    }
+
+    public static logout() {
+        AuthUtils.deleteToken();
+    }
+
+    private static deleteToken() {
+                deleteItemAsync(AuthUtils.USER_STORAGE_KEY);
     }
 
     public static setStoredUser(user: User) {
@@ -65,9 +72,7 @@ export default class AuthUtils {
             return true;
 
         } catch (err) {
-
-            //If token is invalid, try to get another using stored user details
-            //TODO clear the stored user and redirect the user to the login page 
+            AuthUtils.deleteToken();
             return false;
         }
     }
@@ -119,3 +124,5 @@ export default class AuthUtils {
         }
     }
 }
+
+
