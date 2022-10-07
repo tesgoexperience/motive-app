@@ -6,7 +6,7 @@ import { View, StyleSheet, ScrollView, Text, TouchableOpacity} from "react-nativ
 import { Searchbar} from 'react-native-paper';
 import Api from "../util/Api";
 import { Loading } from "../util/Loading";
-import { buttonNeutral, goodColor } from '../util/GeneralStyles';
+import { buttonNeutral, goodBackground } from '../util/GeneralStyles';
 import FriendCard from "./FriendCard";
 import FRIEND_RELATION from "./FriendRelation";
 
@@ -78,7 +78,7 @@ class AddFriend extends Component<PropType, StateType> {
                     value={this.state.searchTerm}
                     style={{ width: "70%", height: 50 }}
                 />
-                <TouchableOpacity onPress={()=>{this.refresh()}} style={[buttonNeutral,goodColor, { width: "25%", height: 50, padding:5, marginLeft: 5, justifyContent: 'center' }]}><Text style={{textAlign: 'center', fontWeight: 'bold'}}>Search</Text></TouchableOpacity>
+                <TouchableOpacity onPress={()=>{this.refresh()}} style={[buttonNeutral,goodBackground, { width: "25%", height: 50, padding:5, marginLeft: 5, justifyContent: 'center' }]}><Text style={{textAlign: 'center', fontWeight: 'bold'}}>Search</Text></TouchableOpacity>
             </View>
 
             <ScrollView style={styles.resultsView}>
