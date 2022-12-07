@@ -11,6 +11,7 @@ import { buttonNeutral } from '../util/GeneralStyles';
 import { RootStackParams } from '../navigation/RootStackParams';
 import { ThemeColors } from 'react-navigation';
 import AuthUtils from '../util/AuthUtils';
+import Browse from '../browse/Browse';
 
 const Stack = createNativeStackNavigator<RootStackParams>();
 
@@ -22,9 +23,9 @@ type PropType = {
 
 enum MENU_OPTIONS {
     FRIENDS = 'Friends',
-    PROFILE = 'Logout',
-    NOTIFICATION = 'Notifications',
-    NEW_EVENT = 'New Event'
+    More = 'More',
+    NOTIFICATION = 'Alerts',
+    NEW_EVENT = 'Share motive'
 }
 
 type StateType = {
@@ -45,14 +46,14 @@ class Home extends Component<PropType, StateType>{
             this.props.navigation.navigate('Friends');
         }
     }
+
     public optionButton(text: string, color?: string) {
         //TODO create a profile page with a logout option. This is tmp solution
-        if (text == MENU_OPTIONS.PROFILE) {
-            return <TouchableOpacity onPress={() => 
-                {
-                    AuthUtils.logout();
-                    this.props.reauthenticateApp()
-                }
+        if (text == MENU_OPTIONS.More) {
+            return <TouchableOpacity onPress={() => {
+                AuthUtils.logout();
+                this.props.reauthenticateApp()
+            }
             } style={[buttonNeutral]}><Text>{text}</Text></TouchableOpacity>
         }
 
@@ -62,21 +63,18 @@ class Home extends Component<PropType, StateType>{
         }
         return <TouchableOpacity onPress={() => this.navigate(text)} style={buttonNeutral}><Text>{text}</Text></TouchableOpacity>
 
-
     }
 
     public render() {
-        return <ScrollView style={styles.container}>
+        return <View style={styles.container}>
             <View style={styles.navbar}>
                 {this.optionButton(MENU_OPTIONS.NEW_EVENT, '#94ffb0')}
-                {this.optionButton(MENU_OPTIONS.PROFILE)}
                 {this.optionButton(MENU_OPTIONS.NOTIFICATION)}
                 {this.optionButton(MENU_OPTIONS.FRIENDS)}
+                {this.optionButton(MENU_OPTIONS.More)}
             </View>
-            <View style={styles.content_container}>
-                <Text style={{ textAlign: 'center' }}></Text>
-            </View>
-        </ScrollView>
+            <Browse />
+        </View>
     }
 }
 
@@ -84,18 +82,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
-    content_container: {
-        flex: 1,
-        justifyContent: "center",
-        backgroundColor: '#FFFFF',
-        content: 'center',
-        color: "#1A1A0F",
-    },
     navbar: {
-        flex: 1,
         padding: 5,
-        marginTop: 20,
+        paddingBottom: 10,
+        marginTop: 10,
         marginEnd: 5,
+        borderColor: '#E2E2E2',
+        borderBottomWidth: 1,
         flexDirection: "row",
         color: "#1A1A0F",
         justifyContent: 'space-evenly'
