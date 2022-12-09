@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
 import Api from "../util/Api";
 import { badColor, buttonNeutral, goodColor } from "../util/GeneralStyles";
 import { Loading } from "../util/Loading";
@@ -34,7 +34,14 @@ class FriendCard extends Component<PropType, StateType> {
             this.setState({ loading: false });
             this.props.parentRefresh();
         }
-        );
+        ).catch((err)=>{
+            let res = err.response.data;
+            if (res.message == 'You cannot request yourself.') {
+                Alert.alert('You cannot request yourself....weird');
+                this.setState({ loading: false });
+
+            }
+        });
     }
 
     public renderActionButton() {
@@ -74,8 +81,8 @@ const styles = StyleSheet.create({
     userContainer: {
         flex: 1,
         flexDirection: "row",
-        backgroundColor: "#ffffff",
-        padding: 20,
+        paddingTop: 20,
+        paddingBottom: 20,
         width: '100%'
     }
 });

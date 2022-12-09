@@ -1,17 +1,13 @@
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Component } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
 
-export default function BackButton ( navigation: any) {
-    return (<View style={[styles.container, styles.horizontal]}><TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 20 }}><Text style={{ fontWeight: 'bold', fontSize: 20 }}>Back</Text></TouchableOpacity></View>)
+
+export class BackButton extends Component<{ navigation: any }, {}>{
+    render() {
+        let button = <View style={{ margin: 20, marginLeft:0 }}>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}><Text style={{ fontWeight: 'bold', fontSize: 20 }}>Back</Text></TouchableOpacity>
+        </View>
+        return button;
+    }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center"
-    },
-    horizontal: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        padding: 10
-    }
-});

@@ -10,6 +10,7 @@ import AuthUtils, { ResponseType, User } from './util/AuthUtils'
 import { Loading } from './util/Loading';
 import Friend from './friend/Friend';
 import Home from './Home/Home';
+import Browse from './browse/Browse'
 import AddFriend from './friend/AddFriend';
 const Stack = createNativeStackNavigator<RootStackParams>();
 

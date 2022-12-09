@@ -2,12 +2,13 @@ import React, { Component } from "react";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../navigation/RootStackParams";
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, RefreshControl } from "react-native";
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, RefreshControl, BackHandler, Alert} from "react-native";
 import { buttonNeutral } from "../util/GeneralStyles";
 import Api from "../util/Api";
 import { Loading } from "../util/Loading";
 import FriendCard from "./FriendCard";
 import FRIEND_RELATION from "./FriendRelation";
+import { BackButton } from "../util/BackButton";
 
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "Friends">;
@@ -40,6 +41,7 @@ class Friend extends Component<PropType, StateType> {
         this.refresh();
         this.setState({ refreshingViaPulldown: false });
     }
+
     public refresh() {
         this.setState({ loading: true });
         Api.get('/friendship/').then(r => {
@@ -95,6 +97,7 @@ class Friend extends Component<PropType, StateType> {
         }
 
         return <View style={{marginTop:20}}>
+            {<BackButton navigation={this.props.navigation}/>}
             <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriend')} style={[buttonNeutral, { backgroundColor: '#94ffb0', justifyContent: 'center', padding: 10 }]}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Add/Search People</Text></TouchableOpacity>
             {this.renderFriends()}
         </View>
