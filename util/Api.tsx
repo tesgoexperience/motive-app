@@ -5,7 +5,10 @@ import AuthUtils, {ResponseType, User} from './AuthUtils'
 const API_URL = process.env.REST_API;
 
 const Api = axios.create({
-    baseURL: API_URL
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    }
 })
 
 /**
@@ -26,6 +29,7 @@ Api.interceptors.request.use(async req => {
     if (req.headers != undefined) {
         req.headers.authorization = user.accessToken;
     }
+
 
     return req;
 
