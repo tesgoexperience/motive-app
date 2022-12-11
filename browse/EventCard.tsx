@@ -16,17 +16,24 @@ export type Motive = {
     createdOne: number
 }
 
+type Attendance = {
+    status: string,
+    user: string,
+    anonymous: boolean,
+    id: string,
+}
 
 type PropType = {
     motive: Motive
 }
 
-type StateType = { 
-    attendance: {},
-    loadingAttendance: boolean
+type StateType = {
+    attendance: Attendance | null,
+    hasAttendance: boolean,
+    loading: boolean
 }
 class EventCard extends Component<PropType, StateType>{
-    state: StateType = { attendance: {}, loadingAttendance: true};
+    state: StateType = { attendance: null, loading: true, hasAttendance: false };
 
     private formatDate(unix_timestamp: number): string {
         let date = new Date(unix_timestamp);
@@ -34,20 +41,60 @@ class EventCard extends Component<PropType, StateType>{
     }
 
     componentDidMount(): void {
-        Api.get('/attendance/?motiveId='+this.props.motive.id).then((res) => { 
-            this.setState({loadingAttendance: false, attendance: res.data});
+        this.loadAttendance();
+    }
+    
+    private loadAttendance(){
+        this.setState({loading: true});
+
+        Api.get('/attendance/?motiveId=' + this.props.motive.id).then((res) => {
+            if (res.data == '' || res.data == null) {
+                this.setState({ loading: false, hasAttendance: false });
+            }else { 
+                this.setState({ loading: false, attendance: res.data, hasAttendance: true });
+            }
+        })
+    }
+    private cancelAttendance() {
+        this.setState({loading: true});
+        Api.post('/attendance/cancel',this.props.motive.id).then(()=>{
+            this.loadAttendance();
         });
     }
+
+    private requestAttendance(anonymous:boolean) {
+        this.setState({loading: true});
+        Api.post('/attendance/request',{ motive : this.props.motive.id, anonymous:anonymous}).then((res)=>{
+            this.loadAttendance();
+
+        });
+    }
+    
     private getOptions() {
-        if (this.state.loadingAttendance) {
-            return <View style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5}}><Loading/></View>
+
+        if (this.state.loading) {
+            return <View style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5 }}><Loading /></View>
         }
 
-        return <><TouchableOpacity style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Join</Text></TouchableOpacity>
-        <TouchableOpacity style={{ width: '10%', borderRadius: 5, padding: 8, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity></>
+
+        if (!this.state.hasAttendance) {
+            return <><TouchableOpacity  onPress={()=>this.requestAttendance(false)} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Join</Text></TouchableOpacity>
+                <TouchableOpacity  onPress={()=>this.requestAttendance(true)} style={{ width: '10%', borderRadius: 5, padding: 8, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity></>
+        }
+
+        let incognitoIcon;
+        if (this.state.attendance?.anonymous) {
+            incognitoIcon = <TouchableOpacity style={{ width: '10%', borderRadius: 5, padding: 8}}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity>;
+        }
+
+        return <><TouchableOpacity onPress={()=>this.cancelAttendance()} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: 'red' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Cancel</Text></TouchableOpacity>
+        {incognitoIcon}
+        </>
+
     }
 
     render() {
+        
         let motive = this.props.motive;
 
         let attendeesList = <ScrollView style={{ height: 150, marginTop: 20 }}>
