@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../navigation/RootStackParams";
@@ -70,15 +70,7 @@ class AddFriend extends Component<PropType, StateType> {
     public render() {
         return <View style={{ padding: 10 }}>
             {<BackButton navigation={this.props.navigation} />}
-
             <View style={{ width: '100%', height: 100, flex: 1, flexDirection: 'row', backgroundColor: 'red' }}>
-                {/* <Searchbar
-                    placeholder="enter username"
-                    onChangeText={(v) => { this.setState({ searchTerm: v }) }}
-                    value={this.state.searchTerm}
-                    style={{ width: "70%", height: 50 }}
-                /> */}
-
                     <TextInput style={{width:'70%', borderWidth:1, height:50, padding: 5, paddingStart:10, fontSize:20,    borderRadius: 10, borderColor:"#E2E2E2", marginRight:"3%"}}
                         onChange={(e) => this.setState({ searchTerm : e.nativeEvent.text }) }
                         placeholder="Enter your friends usernane"

@@ -2,8 +2,9 @@ import React, { Component } from "react";
 
 import { View, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
 import Api from "../util/Api";
-import { badColor, buttonNeutral, goodColor } from "../util/GeneralStyles";
 import { Loading } from "../util/Loading";
+import { Profile } from "../util/Profile";
+import { CommonStyle } from "../util/Styles";
 import FRIEND_RELATION from "./FriendRelation";
 
 type PropType = {
@@ -34,7 +35,7 @@ class FriendCard extends Component<PropType, StateType> {
             this.setState({ loading: false });
             this.props.parentRefresh();
         }
-        ).catch((err)=>{
+        ).catch((err) => {
             let res = err.response.data;
             if (res.message == 'You cannot request yourself.') {
                 Alert.alert('You cannot request yourself....weird');
@@ -45,19 +46,19 @@ class FriendCard extends Component<PropType, StateType> {
     }
 
     public renderActionButton() {
-        let removeButton = <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.REMOVE_FRIEND)} style={[buttonNeutral, badColor, { paddingEnd: 20, paddingStart: 20 }]}><Text style={badColor}>Remove</Text></TouchableOpacity>;
+        let removeButton = <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.REMOVE_FRIEND)} style={[styles.button,CommonStyle.redBorder]}><Text>Remove</Text></TouchableOpacity>;
         switch (this.props.relation) {
             case FRIEND_RELATION.REQUESTED_BY_THEM:
                 return <>
-                    <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.ACCEPT)} style={[buttonNeutral, goodColor, { paddingEnd: 10, paddingStart: 10, marginEnd: 10 }]}><Text style={goodColor}>Accept</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.REJECT)} style={[buttonNeutral, badColor, { paddingEnd: 10, paddingStart: 10 }]}><Text style={badColor}>Reject</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.ACCEPT)} style={[styles.button,CommonStyle.greenBorder]}><Text>Accept</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.REJECT)} style={[styles.button, CommonStyle.redBorder]}><Text>Reject</Text></TouchableOpacity>
                 </>
             case FRIEND_RELATION.FRIEND:
                 return removeButton;
             case FRIEND_RELATION.REQUESTED_BY_YOU:
                 return removeButton;
             case FRIEND_RELATION.NO_RELATION:
-                 return <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.REQUEST)} style={[buttonNeutral,goodColor, { paddingEnd: 20, paddingStart: 20 }]}><Text style={goodColor}>Request</Text></TouchableOpacity>
+                return <TouchableOpacity onPress={() => this.changeRelation(USER_ACTIONS.REQUEST)} style={[styles.button,CommonStyle.greenBorder]}><Text>Request</Text></TouchableOpacity>
         }
     }
 
@@ -67,8 +68,9 @@ class FriendCard extends Component<PropType, StateType> {
             return <View style={styles.userContainer}><Loading /></View>
         }
 
-        return (<View style={styles.userContainer}><Text style={{ fontSize: 15, fontWeight: 'bold', textAlignVertical: "center" }}>{this.props.username}</Text>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: "flex-end", width: '100%' }}>
+        return (<View style={styles.userContainer}>
+            <View style={{width:"60%"}}><Profile username={this.props.username} /></View>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: "flex-end", width: '40%' }}>
                 {this.renderActionButton()}
             </View>
         </View>)
@@ -81,8 +83,18 @@ const styles = StyleSheet.create({
     userContainer: {
         flex: 1,
         flexDirection: "row",
+        justifyContent:'space-between',
         paddingTop: 20,
         paddingBottom: 20,
-        width: '100%'
-    }
+        width: '100%',
+        borderColor:'lightgray',
+        borderBottomWidth:1
+    },
+    button: {
+        padding:5,
+        paddingEnd:10,
+        paddingStart:10,
+        justifyContent: 'center',
+        marginRight:10,
+    },
 });
