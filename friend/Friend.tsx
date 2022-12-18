@@ -9,6 +9,7 @@ import { Loading } from "../util/Loading";
 import FriendCard from "./FriendCard";
 import FRIEND_RELATION from "./FriendRelation";
 import { BackButton } from "../util/BackButton";
+import { CommonStyle } from "../util/Styles";
 
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "Friends">;
@@ -65,9 +66,7 @@ class Friend extends Component<PropType, StateType> {
                 break;
         }
 
-        titleText = titleText + ' • ' + users.length;
-
-        let title = <Text style={styles.sectionHeader}>{titleText}</Text>;
+        let title = <Text style={styles.sectionHeader}>{titleText} <Text style={{ color: 'red', fontWeight: 'bold' }}> • {users.length}</Text></Text>;
         if (users == null || users.length == 0) {
             return <View style={styles.view}>
                 {title}
@@ -84,8 +83,8 @@ class Friend extends Component<PropType, StateType> {
     }
     public renderFriends() {
         return <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshingViaPulldown} onRefresh={this.refreshPulldown}/> } style={styles.resultsView}>
-            {this.renderFriendContainer(this.state.socialSummary.requestsForUser, FRIEND_RELATION.REQUESTED_BY_THEM)}
-            {this.renderFriendContainer(this.state.socialSummary.requestsByUser, FRIEND_RELATION.REQUESTED_BY_YOU)}
+            {this.renderFriendContainer(this.state.socialSummary.requestsRecieved, FRIEND_RELATION.REQUESTED_BY_THEM)}
+            {this.renderFriendContainer(this.state.socialSummary.requestsSent, FRIEND_RELATION.REQUESTED_BY_YOU)}
             {this.renderFriendContainer(this.state.socialSummary.friends, FRIEND_RELATION.FRIEND)}
         </ScrollView>
     }
@@ -96,9 +95,9 @@ class Friend extends Component<PropType, StateType> {
             return <Loading />
         }
 
-        return <View style={{marginTop:20}}>
+        return <View style={{marginTop:5}}>
             {<BackButton navigation={this.props.navigation}/>}
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriend')} style={[buttonNeutral, { backgroundColor: '#94ffb0', justifyContent: 'center', padding: 10 }]}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Add/Search People</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriend')} style={[CommonStyle.greenBorder, CommonStyle.greenBackground,{padding:10, marginTop:20, marginBottom:20}]}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Add/Search People</Text></TouchableOpacity>
             {this.renderFriends()}
         </View>
     }
@@ -109,6 +108,7 @@ export default Friend
 
 const styles = StyleSheet.create({
     view: {
+        marginBottom:30,
         padding: 10,
         paddingTop: 15
     },
