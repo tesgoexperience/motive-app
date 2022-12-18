@@ -2,18 +2,12 @@
 import React, { Component } from 'react';
 
 import { StatusBar } from 'expo-status-bar';
-import { Alert, processColor, RefreshControl, ScrollView, StyleSheet, Text, View, ViewStyle, Button, TouchableOpacity } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Loading } from '../util/Loading';
-import Friend from '../friend/Friend';
-import { buttonNeutral } from '../util/GeneralStyles';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import {NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { buttonNeutral, goodColor } from '../util/GeneralStyles';
 import { RootStackParams } from '../navigation/RootStackParams';
-import { ThemeColors } from 'react-navigation';
 import AuthUtils from '../util/AuthUtils';
-import Browse from '../browse/Browse';
-
-const Stack = createNativeStackNavigator<RootStackParams>();
+import Browse from '../motive/Browse';
 
 // TODO investigate speed problem
 type PropType = {
@@ -23,55 +17,29 @@ type PropType = {
 
 enum MENU_OPTIONS {
     FRIENDS = 'Friends',
-    More = 'More',
+    MORE = 'More',
     NOTIFICATION = 'Alerts',
-    NEW_EVENT = 'Share motive'
+    NEW_MOTIVE = 'New Motive'
 }
 
 type StateType = {
     refreshing: boolean
 }
+
 class Home extends Component<PropType, StateType>{
     state: StateType = { refreshing: false }
 
-    /**
-     *
-     */
     constructor(props: PropType) {
         super(props);
-    }
-
-    public navigate(location: string) {
-        if (location == MENU_OPTIONS.FRIENDS) {
-            this.props.navigation.navigate('Friends');
-        }
-    }
-
-    public optionButton(text: string, color?: string) {
-        //TODO create a profile page with a logout option. This is tmp solution
-        if (text == MENU_OPTIONS.More) {
-            return <TouchableOpacity onPress={() => {
-                AuthUtils.logout();
-                this.props.reauthenticateApp()
-            }
-            } style={[buttonNeutral]}><Text>{text}</Text></TouchableOpacity>
-        }
-
-        if (color != undefined) {
-            let bg = { backgroundColor: color }
-            return <TouchableOpacity style={[buttonNeutral, bg]}><Text>{text}</Text></TouchableOpacity>
-        }
-        return <TouchableOpacity onPress={() => this.navigate(text)} style={buttonNeutral}><Text>{text}</Text></TouchableOpacity>
-
     }
 
     public render() {
         return <View style={styles.container}>
             <View style={styles.navbar}>
-                {this.optionButton(MENU_OPTIONS.NEW_EVENT, '#94ffb0')}
-                {this.optionButton(MENU_OPTIONS.NOTIFICATION)}
-                {this.optionButton(MENU_OPTIONS.FRIENDS)}
-                {this.optionButton(MENU_OPTIONS.More)}
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('NewMotive')} style={[buttonNeutral,goodColor]}><Text>New Motive</Text></TouchableOpacity>
+                <TouchableOpacity style={buttonNeutral}><Text>Notifications</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Friends')} style={buttonNeutral}><Text>Friends</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { AuthUtils.logout(); this.props.reauthenticateApp() }} style={[buttonNeutral]}><Text>More</Text></TouchableOpacity>
             </View>
             <Browse />
         </View>
@@ -94,4 +62,5 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     }
 });
+
 export default Home
