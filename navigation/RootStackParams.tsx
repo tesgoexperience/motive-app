@@ -3,5 +3,6 @@ export type RootStackParams = {
     Register: undefined;
     Home: undefined;
     Friends: undefined;
-    AddFriend: undefined
+    AddFriend: undefined;
+    NewMotive: undefined;
 };
