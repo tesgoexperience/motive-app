@@ -43,33 +43,33 @@ class EventCard extends Component<PropType, StateType>{
     componentDidMount(): void {
         this.loadAttendance();
     }
-    
-    private loadAttendance(){
-        this.setState({loading: true});
+
+    private loadAttendance() {
+        this.setState({ loading: true });
 
         Api.get('/attendance/?motiveId=' + this.props.motive.id).then((res) => {
             if (res.data == '' || res.data == null) {
                 this.setState({ loading: false, hasAttendance: false });
-            }else { 
+            } else {
                 this.setState({ loading: false, attendance: res.data, hasAttendance: true });
             }
         })
     }
     private cancelAttendance() {
-        this.setState({loading: true});
-        Api.post('/attendance/cancel',this.props.motive.id).then(()=>{
+        this.setState({ loading: true });
+        Api.post('/attendance/cancel', this.props.motive.id).then(() => {
             this.loadAttendance();
         });
     }
 
-    private requestAttendance(anonymous:boolean) {
-        this.setState({loading: true});
-        Api.post('/attendance/request',{ motive : this.props.motive.id, anonymous:anonymous}).then((res)=>{
+    private requestAttendance(anonymous: boolean) {
+        this.setState({ loading: true });
+        Api.post('/attendance/request', { motive: this.props.motive.id, anonymous: anonymous }).then((res) => {
             this.loadAttendance();
 
         });
     }
-    
+
     private getOptions() {
 
         if (this.state.loading) {
@@ -78,32 +78,41 @@ class EventCard extends Component<PropType, StateType>{
 
 
         if (!this.state.hasAttendance) {
-            return <><TouchableOpacity  onPress={()=>this.requestAttendance(false)} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Join</Text></TouchableOpacity>
-                <TouchableOpacity  onPress={()=>this.requestAttendance(true)} style={{ width: '10%', borderRadius: 5, padding: 8, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity></>
+            return <><TouchableOpacity onPress={() => this.requestAttendance(false)} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Join</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => this.requestAttendance(true)} style={{ width: '10%', borderRadius: 5, padding: 8, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity></>
         }
 
         let incognitoIcon;
         if (this.state.attendance?.anonymous) {
-            incognitoIcon = <TouchableOpacity style={{ width: '10%', borderRadius: 5, padding: 8}}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity>;
+            incognitoIcon = <TouchableOpacity style={{ width: '10%', borderRadius: 5, padding: 8 }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity>;
         }
 
-        return <><TouchableOpacity onPress={()=>this.cancelAttendance()} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: 'red' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Cancel</Text></TouchableOpacity>
-        {incognitoIcon}
+        return <><TouchableOpacity onPress={() => this.cancelAttendance()} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: 'red' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Cancel</Text></TouchableOpacity>
+            {incognitoIcon}
         </>
 
     }
 
-    render() {
-        
+    public getAttendeeList() {
         let motive = this.props.motive;
 
-        let attendeesList = <ScrollView style={{ height: 150, marginTop: 20 }}>
-            <View style={{ flex: 1, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'space-around' }}>{motive.confirmedAttendance.map((attendee) => {
-                return <View style={{ padding: 10, width: '100%', borderBottomColor: '#E2E2E2', borderBottomWidth: 1 }}><Profile username={attendee} imageUrl={'https://placeimg.com/500/500'} /></View>
-            })}
-                <View style={{ padding: 10, width: '100%', borderBottomColor: '#E2E2E2', borderBottomWidth: 1 }}><Profile username={motive.confirmedAttendanceAnonymous + " Anonymous"} imageUrl={'https://cdn.pixabay.com/photo/2017/04/15/04/36/incognito-2231825_960_720.png'} /></View>
-            </View>
-        </ScrollView>
+        let anonymouse = motive.confirmedAttendanceAnonymous > 0 ? <View style={{ padding: 10, width: '100%', borderBottomColor: '#E2E2E2', borderBottomWidth: 1 }}><Profile username={motive.confirmedAttendanceAnonymous + " Anonymous"} imageUrl={'https://cdn.pixabay.com/photo/2017/04/15/04/36/incognito-2231825_960_720.png'} /></View> : null;
+
+        if (motive.confirmedAttendance.length > 0) {
+            return <ScrollView style={{ height: 150, marginTop: 20 }}>
+                <View style={{ flex: 1, flexDirection: "column", flexWrap: 'wrap', justifyContent: 'space-around' }}>{motive.confirmedAttendance.map((attendee) => {
+                    return <View style={{ padding: 10, width: '100%', borderBottomColor: '#E2E2E2', borderBottomWidth: 1 }}><Profile username={attendee} imageUrl={'https://placeimg.com/500/500'} /></View>
+                })}
+                 {anonymouse}
+                </View>
+            </ScrollView>
+        } else {
+            return <ScrollView style={{ height: 20, marginTop: 20 }}>{anonymouse}</ScrollView>
+        }
+    }
+
+    render() {
+        let motive = this.props.motive;
 
         return <View style={{ width: '95%', borderWidth: 1, borderColor: '#E2E2E2', marginTop: 20, borderRadius: 10 }}>
 
@@ -118,7 +127,7 @@ class EventCard extends Component<PropType, StateType>{
                     <View style={{ height: 4, backgroundColor: '#69FFAA', width: '100%' }}></View>
                     <Text style={{ fontSize: 15, textAlign: 'center', fontWeight: 'bold', margin: 10 }}>{this.formatDate(motive.start)}</Text></View>
                 <View style={{ borderWidth: 1, borderColor: '#E2E2E2', borderRadius: 5, padding: 5 }}><Text style={{ fontSize: 15 }}>{motive.description.substring(0, 400)}....</Text></View>
-                {attendeesList}
+                {this.getAttendeeList()}
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 }}>
                     {this.getOptions()}
                 </View>
