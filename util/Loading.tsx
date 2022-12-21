@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 
 export class Loading extends Component<{}, {}>{

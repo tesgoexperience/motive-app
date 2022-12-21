@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import { ScrollView, View, Text, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
 import EventCard, { Motive } from './EventCard';

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 
 import { View, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
 import Api from "../util/Api";
@@ -70,7 +70,7 @@ class FriendCard extends Component<PropType, StateType> {
 
         return (<View style={styles.userContainer}>
             <View style={{width:"60%"}}><Profile username={this.props.username} /></View>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: "flex-end", width: '40%' }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: "flex-end",alignItems:"flex-end", width: '40%' }}>
                 {this.renderActionButton()}
             </View>
         </View>)
@@ -91,10 +91,10 @@ const styles = StyleSheet.create({
         borderBottomWidth:1
     },
     button: {
-        padding:5,
-        paddingEnd:10,
+    paddingEnd:10,
         paddingStart:10,
         justifyContent: 'center',
         marginRight:10,
+        height:40
     },
 });

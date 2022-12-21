@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import { Alert, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import Login from './Auth/Login';

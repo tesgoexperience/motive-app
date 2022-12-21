@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Api from '../util/Api';
