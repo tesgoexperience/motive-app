@@ -27,7 +27,8 @@ export const CommonStyle = StyleSheet.create({
     fontSize: 15,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#E2E2E2'
+    borderColor: '#E2E2E2',
+    overflow: 'hidden'
   },
   formView: {
     padding:20,
@@ -54,11 +55,11 @@ export const CommonStyle = StyleSheet.create({
   },
   greenBorder: { 
     borderWidth: 1, 
-    borderRadius: 5, 
+    borderRadius: 5,
     borderColor:'#94ffb0'
   },
   greenBackground: {
-    backgroundColor:'#94ffb0'
+    backgroundColor:'#94ffb0',
   },
   redBackground: {
     backgroundColor:'#e32749'
