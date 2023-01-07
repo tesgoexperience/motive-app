@@ -13,7 +13,7 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../navigation/RootStackParams";
 
-import AuthUtils, { ResponseType, User } from "../util/AuthUtils";
+import AuthUtils, { ResponseType, UserAuthDetails } from "../util/AuthUtils";
 import { Loading } from "../util/Loading";
 import { CommonStyle } from '../util/Styles'
 
@@ -23,7 +23,7 @@ type MyProps = {
 };
 
 type MyState = {
-  user: User,
+  user: UserAuthDetails,
   loading: boolean
 }
 class Login extends Component<MyProps, MyState> {

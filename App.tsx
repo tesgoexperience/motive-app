@@ -6,17 +6,18 @@ import Register from './Auth/Register';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParams } from './navigation/RootStackParams';
-import AuthUtils, { ResponseType, User } from './util/AuthUtils'
+import AuthUtils, { ResponseType, UserAuthDetails } from './util/AuthUtils'
 import { Loading } from './util/Loading';
 import Friend from './friend/Friend';
 import Home from './Home/Home';
 import AddFriend from './friend/AddFriend';
 import NewMotive from './motive/NewMotive';
+import ViewMotive from './motive/ViewMotive';
 const Stack = createNativeStackNavigator<RootStackParams>();
 
 type MyState = {
     loading: boolean,
-    userDetails: User | null,
+    userDetails: UserAuthDetails | null,
     authenticated: boolean
 };
 
@@ -87,6 +88,7 @@ class App extends Component<{}, MyState>{
                         <Stack.Screen name="Friends" component={Friend} />
                         <Stack.Screen name="AddFriend" component={AddFriend} />
                         <Stack.Screen name="NewMotive" component={NewMotive} />
+                        <Stack.Screen name="ViewMotive" component={ViewMotive} />
                     </Stack.Navigator>
                 </NavigationContainer>
 

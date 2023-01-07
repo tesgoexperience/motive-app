@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import AuthUtils, {ResponseType, User} from './AuthUtils'
+import AuthUtils, {ResponseType, UserAuthDetails} from './AuthUtils'
 
 const API_URL = process.env.REST_API;
 
@@ -24,7 +24,7 @@ Api.interceptors.request.use(async req => {
         return req;
     }
 
-    let user: User = await AuthUtils.getStoredUser();
+    let user: UserAuthDetails = await AuthUtils.getStoredUser();
 
     if (req.headers != undefined) {
         req.headers.authorization = user.accessToken;

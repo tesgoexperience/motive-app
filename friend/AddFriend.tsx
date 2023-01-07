@@ -69,11 +69,11 @@ class AddFriend extends Component<PropType, StateType> {
         return <View style={{ padding: 10 }}>
             {<BackButton navigation={this.props.navigation} />}
             <View style={{ width: '100%', height: 100, flex: 1, flexDirection: 'row', backgroundColor: 'red' }}>
-                    <TextInput style={{width:'70%', borderWidth:1, height:50, padding: 5, paddingStart:10, fontSize:20,    borderRadius: 10, borderColor:"#E2E2E2", marginRight:"3%"}}
-                        onChange={(e) => this.setState({ searchTerm : e.nativeEvent.text }) }
-                        placeholder="Enter your friends usernane"
-                    />
-                <TouchableOpacity onPress={() => { this.refresh() }} style={{width:'27%',  height:50,  borderWidth: 1, borderColor: '#69FFAA', borderRadius: 5, justifyContent:'center'}}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Search</Text></TouchableOpacity>
+                <TextInput style={{ width: '70%', borderWidth: 1, height: 50, padding: 5, paddingStart: 10, fontSize: 20, borderRadius: 10, borderColor: "#E2E2E2", marginRight: "3%" }}
+                    onChange={(e) => this.setState({ searchTerm: e.nativeEvent.text })}
+                    placeholder="Enter your friends username"
+                />
+                <TouchableOpacity onPress={() => { this.refresh() }} style={{ width: '27%', height: 50, borderWidth: 1, borderColor: '#69FFAA', borderRadius: 5, justifyContent: 'center' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Search</Text></TouchableOpacity>
             </View>
 
 

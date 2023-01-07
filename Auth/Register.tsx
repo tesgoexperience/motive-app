@@ -3,7 +3,7 @@ import { TextInput, Text, View, StyleSheet, TouchableOpacity, GestureResponderEv
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../navigation/RootStackParams';
 import Api from '../util/Api'
-import { ResponseType, User } from '../util/AuthUtils'
+import { ResponseType, UserAuthDetails } from '../util/AuthUtils'
 import { AuthError } from '../util/Errors';
 import AuthUtils from '../util/AuthUtils';
 import { Loading } from '../util/Loading';
@@ -71,7 +71,7 @@ class Register extends Component<MyProps, MyState>{
 
             Api.post("/user/register", this.state.user).then(res => {
                 // since the registration was successful, log the user in with the details provided during registration
-                let user: User = { email: this.state.user.email, password: this.state.user.password, accessToken: "" }
+                let user: UserAuthDetails = { email: this.state.user.email, password: this.state.user.password, accessToken: "" }
                 AuthUtils.attemptAuthentication(user).then(res => {
                     if (res == ResponseType.OK) {
                         this.props.reauthenticateApp();
