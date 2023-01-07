@@ -8,40 +8,37 @@ import { buttonNeutral, goodColor } from '../util/GeneralStyles';
 import { RootStackParams } from '../navigation/RootStackParams';
 import AuthUtils from '../util/AuthUtils';
 import Browse from '../motive/Browse';
+import Api from '../util/Api';
+import { Motive } from '../motive/EventCard';
 
-// TODO investigate speed problem
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "Home">,
     reauthenticateApp: any
 };
-
-enum MENU_OPTIONS {
-    FRIENDS = 'Friends',
-    MORE = 'More',
-    NOTIFICATION = 'Alerts',
-    NEW_MOTIVE = 'New Motive'
-}
 
 type StateType = {
     refreshing: boolean
 }
 
 class Home extends Component<PropType, StateType>{
-    state: StateType = { refreshing: false }
+    state: StateType = { refreshing: false}
 
     constructor(props: PropType) {
         super(props);
+    }
+
+    openMotive = (motive: Motive, owner: boolean )=>{
+        this.props.navigation.navigate('ViewMotive', {motive: motive, owner: owner});
     }
 
     public render() {
         return <View style={styles.container}>
             <View style={styles.navbar}>
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('NewMotive')} style={[buttonNeutral,goodColor]}><Text>New Motive</Text></TouchableOpacity>
-                <TouchableOpacity style={buttonNeutral}><Text>Notifications</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Friends')} style={buttonNeutral}><Text>Friends</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => { AuthUtils.logout(); this.props.reauthenticateApp() }} style={[buttonNeutral]}><Text>More</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Friends')} style={buttonNeutral}><Text>👥 Friends</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { AuthUtils.logout(); this.props.reauthenticateApp() }} style={[buttonNeutral]}><Text>⚙️ Profile</Text></TouchableOpacity>
             </View>
-            <Browse />
+            <Browse  openMotive={this.openMotive} />
         </View>
     }
 }
