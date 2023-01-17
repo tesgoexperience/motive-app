@@ -1,17 +1,17 @@
 import { Component } from "react";
-import { Motive, MotiveManage } from "./EventCard";
+import { MotiveManage } from "./EventCard";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { RootStackParams } from "../navigation/RootStackParams";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BackButton } from "../util/BackButton";
 import { Profile } from "../util/Profile";
-import { Loading } from "../util/Loading";
-import UserList from "../util/UserList";
+import UserListOptions from "../util/UserListOptions";
 
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "ViewMotive">;
     route: any
 }
+
 type StateType = {
     motive: MotiveManage, owner: boolean
 }
@@ -22,16 +22,16 @@ class ViewMotive extends Component<PropType, StateType>{
         if (!this.state.owner) {
             return;
         }
-        return <View style={{ marginTop: 25 }}>{<UserList title="Requests" users={this.state.motive.requests.map(user => { return { username: user, options: [{ color: 'GOOD', onclick: () => { }, title: 'Accept' },{ color: 'BAD', onclick: () => { }, title: 'Reject' }] } })} />}</View>
+        return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>{<UserListOptions size={1} title="Requests" users={this.state.motive.requests.map(user => { return { username: user, options: [{ color: 'GOOD', onclick: () => { }, title: 'Accept' }, { color: 'BAD', onclick: () => { }, title: 'Reject' }] } })} />}</View>
     }
 
     getAttendees() {
-        return <View style={{ marginTop: 25 }}>{<UserList title="Attendees" users={this.state.motive.confirmedAttendance.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => { }, title: 'Remove' }] } })} />}</View>
+        return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>{<UserListOptions size={1} title="Attendees" users={this.state.motive.confirmedAttendance.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => { }, title: 'Remove' }] } })} />}</View>
     }
 
     render() {
         let motive = this.state.motive;
-        return <View style={{ flex: 1, flexDirection: 'column'}}>
+        return <View style={{ flex: 1, flexDirection: 'column' }}>
             <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
                 {<BackButton navigation={this.props.navigation} />}
                 <View style={{ flex: 0, marginTop: 20, marginBottom: 10, height: 40, flexDirection: "row", justifyContent: 'space-between' }}>

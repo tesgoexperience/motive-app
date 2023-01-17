@@ -13,6 +13,8 @@ import Home from './Home/Home';
 import AddFriend from './friend/AddFriend';
 import NewMotive from './motive/NewMotive';
 import ViewMotive from './motive/ViewMotive';
+import { MenuProvider } from 'react-native-popup-menu';
+import UsersList from './util/UserList';
 const Stack = createNativeStackNavigator<RootStackParams>();
 
 type MyState = {
@@ -75,8 +77,7 @@ class App extends Component<{}, MyState>{
 
             );
         } else {
-            show =
-                <NavigationContainer independent={true}>
+            show = <NavigationContainer independent={true}>
                     <Stack.Navigator screenOptions={{
                         headerShown: false,
                         header: () => null,
@@ -89,12 +90,13 @@ class App extends Component<{}, MyState>{
                         <Stack.Screen name="AddFriend" component={AddFriend} />
                         <Stack.Screen name="NewMotive" component={NewMotive} />
                         <Stack.Screen name="ViewMotive" component={ViewMotive} />
+                        <Stack.Screen name="ListUsers" component={UsersList} />
                     </Stack.Navigator>
                 </NavigationContainer>
 
         }
 
-        return ( <View style={styles.container}>{show}</View>)
+        return (<MenuProvider><View style={styles.container}>{show}</View></MenuProvider>)
 
 
     }

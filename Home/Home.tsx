@@ -1,14 +1,12 @@
 
 import { Component } from 'react';
 
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { buttonNeutral, goodColor } from '../util/GeneralStyles';
 import { RootStackParams } from '../navigation/RootStackParams';
 import AuthUtils from '../util/AuthUtils';
 import Browse from '../motive/Browse';
-import Api from '../util/Api';
 import { Motive } from '../motive/EventCard';
 
 type PropType = {
@@ -38,7 +36,7 @@ class Home extends Component<PropType, StateType>{
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('Friends')} style={buttonNeutral}><Text>👥 Friends</Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => { AuthUtils.logout(); this.props.reauthenticateApp() }} style={[buttonNeutral]}><Text>⚙️ Profile</Text></TouchableOpacity>
             </View>
-            <Browse  openMotive={this.openMotive} />
+            <Browse navigator={this.props.navigation} openMotive={this.openMotive} />
         </View>
     }
 }

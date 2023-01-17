@@ -7,7 +7,7 @@ import Api from "../util/Api";
 import { Loading } from "../util/Loading";
 import { BackButton } from "../util/BackButton";
 import { CommonStyle } from "../util/Styles";
-import UserList, { User } from "../util/UserList";
+import UserListOptions, { User } from "../util/UserListOptions";
 
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "Friends">;
@@ -75,9 +75,9 @@ class Friend extends Component<PropType, StateType> {
     public renderFriends() {
         return <View style={{ flex: 0, flexDirection: 'column', justifyContent: 'space-between' }}>
             <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshingViaPulldown} onRefresh={this.refreshPulldown} />} contentContainerStyle={{ height: '100%', paddingTop: 20 }}>
-                <View style={{ marginBottom: 50 }}>{<UserList title="Requests Received" users={this.state.socialSummary.requestsReceived.map(user => { return { username: user, options: [{ color: 'GOOD', onclick: () => this.changeRelation(user, USER_ACTIONS.ACCEPT), title: 'Accept' }, { color: 'BAD', onclick: () =>  this.changeRelation(user, USER_ACTIONS.REJECT), title: 'Reject' }] } })} />}</View>
-                <View style={{ marginBottom: 50 }}>{<UserList title="Requests Sent" users={this.state.socialSummary.requestsSent.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REMOVE_FRIEND), title: 'Remove' }] } })} />}</View>
-                <View style={{ marginBottom: 50 }}>{<UserList title="Friends" users={this.state.socialSummary.friends.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REMOVE_FRIEND), title: 'Remove' }] } })} />}</View>
+                <View style={{ marginBottom: 50 }}>{<UserListOptions size={1} title="Requests Received" users={this.state.socialSummary.requestsReceived.map(user => { return { username: user, options: [{ color: 'GOOD', onclick: () => this.changeRelation(user, USER_ACTIONS.ACCEPT), title: 'Accept' }, { color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REJECT), title: 'Reject' }] } })} />}</View>
+                <View style={{ marginBottom: 50 }}>{<UserListOptions size={1} title="Requests Sent" users={this.state.socialSummary.requestsSent.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REMOVE_FRIEND), title: 'Remove' }] } })} />}</View>
+                <View style={{ marginBottom: 50 }}>{<UserListOptions size={1} title="Friends" users={this.state.socialSummary.friends.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REMOVE_FRIEND), title: 'Remove' }] } })} />}</View>
             </ScrollView></View>
 
     }
