@@ -1,35 +1,35 @@
-import { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { Component } from "react";
+
+import { View, ScrollView, Text, TouchableOpacity } from "react-native";
 import { Profile } from "./Profile";
-import { CommonStyle } from "./Styles";
+import { RootStackParams } from "../navigation/RootStackParams";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { BackButton } from "./BackButton";
 
-export type option = {
-    title: string,
-    color: 'GOOD' | 'BAD',
-    onclick: any
+type PropType = {
+    navigation: NativeStackNavigationProp<RootStackParams, "ViewMotive">;
+    route: any
 }
 
-export type User = {
-    username: string,
-    options: Array<option>
+type StateType = {
+    users: Array<string>,
+    title: string
 }
 
-class UserSelect extends Component<{ title: string, users: Array<User>}, {}> {
-    render() {
-        return <View>
-            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{this.props.title}<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.props.users.length}</Text></Text>
-            {this.props.users.map((user => {
-                return <View style={{ flex: 0, flexDirection: "row", justifyContent: 'space-between', marginTop: 20 }}>
-                    <View style={{ width: "60%" }}><Profile username={user.username} /></View>
-                    <View style={{ flex: 0, flexDirection: 'row', justifyContent: "flex-end", width: '40%', alignItems:'center' }}>
-                        {user.options.map((option) => {
-                            return <TouchableOpacity onPress={() => option.onclick(user.username)} style={[option.color=='GOOD' ? CommonStyle.greenBorder :  CommonStyle.redBorder   ,{ paddingEnd: 10, paddingStart: 10, justifyContent: 'center', marginRight: 10, height: 40}]}><Text style={{fontWeight:'bold'}}>{option.title}</Text></TouchableOpacity>
-                        })}
-                    </View>
-                </View>
-            }))}
+
+class UsersList extends Component<PropType, StateType> {
+    state: StateType = {users: this.props.route.params.users, title:this.props.route.params.title };
+
+    public render() {
+        return < View style={{ marginTop: 40, paddingBottom: 30 }}>
+            {<BackButton navigation={this.props.navigation} />}
+            <Text style={{ fontWeight: 'bold', fontSize: 20, textAlign: 'left', marginBottom: 20 }}>{this.state.title}<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.users.length}</Text></Text>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>{this.state.users.map((k) => {
+                return <View key={k} style={{ marginTop: 20, flex: 1, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'center' }}><Profile username={k} /></View>;
+            })}</ScrollView>
         </View>
     }
 }
 
-export default UserSelect;
+
+export default UsersList;

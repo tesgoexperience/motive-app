@@ -75,3 +75,10 @@ export const CommonStyle = StyleSheet.create({
     borderColor:'red'
   },
 });
+
+
+export const colors = {
+  lightgray: "#E2E2E2",
+  red: "#f54e42",
+  green: "#69FFAA"
+}
