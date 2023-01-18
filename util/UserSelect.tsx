@@ -42,7 +42,7 @@ class UserSelect extends Component<PropType, StateType> {
         let usersListArray = Array.from(this.state.userList.keys());
 
         return <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>{usersListArray.map((k) => {
-            let text = <View style={{ marginLeft: 20 }}><Profile username={k} /></View>
+            let text = <View style={{ marginLeft: 20, width:'100%' }}><Profile username={k} /></View>
             let button;
 
             if (this.state.userList.get(k)) {

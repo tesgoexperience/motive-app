@@ -11,7 +11,7 @@ import {
   Keyboard,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParams } from "../navigation/RootStackParams";
+import { RootStackParams } from "../util/RootStackParams";
 
 import AuthUtils, { ResponseType, UserAuthDetails } from "../util/AuthUtils";
 import { Loading } from "../util/Loading";

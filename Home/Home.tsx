@@ -4,7 +4,7 @@ import { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { buttonNeutral, goodColor } from '../util/GeneralStyles';
-import { RootStackParams } from '../navigation/RootStackParams';
+import { RootStackParams } from '../util/RootStackParams';
 import AuthUtils from '../util/AuthUtils';
 import Browse from '../motive/Browse';
 import { Motive } from '../motive/EventCard';

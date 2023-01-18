@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import { View, ScrollView, Text, TouchableOpacity } from "react-native";
 import { Profile } from "./Profile";
-import { RootStackParams } from "../navigation/RootStackParams";
+import { RootStackParams } from "./RootStackParams";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { BackButton } from "./BackButton";
 

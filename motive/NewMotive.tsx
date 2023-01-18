@@ -4,7 +4,7 @@ import { TextInput, Text, View, TouchableOpacity, TouchableWithoutFeedback, Keyb
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { RootStackParams } from "../navigation/RootStackParams";
+import { RootStackParams } from "../util/RootStackParams";
 import { BackButton } from "../util/BackButton";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Api from "../util/Api";

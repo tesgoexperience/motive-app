@@ -1,7 +1,7 @@
 import { Component } from "react";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParams } from "../navigation/RootStackParams";
+import { RootStackParams } from "../util/RootStackParams";
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput } from "react-native";
 import Api from "../util/Api";
 import { Loading } from "../util/Loading";

@@ -1,7 +1,7 @@
 import { Component } from "react";
 import { MotiveManage } from "./EventCard";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { RootStackParams } from "../navigation/RootStackParams";
+import { RootStackParams } from "../util/RootStackParams";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BackButton } from "../util/BackButton";
 import { Profile } from "../util/Profile";
