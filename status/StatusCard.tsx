@@ -8,6 +8,7 @@ import Api from '../util/Api';
 import { colors } from '../util/Styles';
 import DateUtil from '../util/DateUtil';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Loading } from '../util/Loading';
 
 export type Status = {
     id: number,
@@ -18,8 +19,8 @@ export type Status = {
     interested: boolean
 }
 
-export class StatusCard extends Component<{ status: Status, navigator: any }, { status: Status, loading: boolean, viewInterested: boolean }>{
-    state = { status: this.props.status, loading: false, viewInterested: false, interestedUsers: ['gregg', 'john'] }
+export class StatusCard extends Component<{ status: Status, navigator: any}, { status: Status, loading: boolean, viewInterested: boolean, interestedUsers: Array<string> }>{
+    state = { status: this.props.status, loading: false, viewInterested: false, interestedUsers: [] }
 
     toggleInterest() {
         let option: string = this.state.status.interested ? 'remove' : 'add';
@@ -29,15 +30,28 @@ export class StatusCard extends Component<{ status: Status, navigator: any }, { 
     }
 
     componentDidMount(): void {
-        this.setState({
-            loading: false
-        });
+        if (this.state.status.belongsToMe) {
+            this.setState({ loading: true });
+            Api.get('/status/interest/',{
+                params: { 
+                    'status':this.state.status.id
+                }
+            }).then((res)=>{
+                this.setState({
+                    loading: false,
+                    interestedUsers: res.data
+                });
+            })
+        }
+        
+      
+      
     }
 
     getOptions() {
-        // if owner, return list of interested people
+        // if owner, return list of interested people 
         if (this.state.status.belongsToMe) {
-            return <View style={{ padding: 5 }}><TouchableOpacity onPress={() => { this.setState({ viewInterested: true }) }} style={{ width: '100%', borderRadius: 5, padding: 4, borderColor: '#69FFAA', borderWidth: 1 }}><Text style={{ textAlign: 'center', fontWeight: '600' }}>View Interest<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.interestedUsers.length}</Text></Text></TouchableOpacity>
+            return <View style={{ padding: 5 }}><TouchableOpacity onPress={() => { this.setState({ viewInterested: true }) }} style={{ width: '100%', borderRadius: 5, padding: 4, borderColor: '#69FFAA', borderWidth: 1 }}><Text style={{ textAlign: 'center', fontWeight: '600' }}>View Interested<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.interestedUsers.length}</Text></Text></TouchableOpacity>
             </View>
         }
 
@@ -55,12 +69,13 @@ export class StatusCard extends Component<{ status: Status, navigator: any }, { 
     }
 
     render() {
+        
         if (this.state.loading) {
-            return;
+            return <></>;
         }
 
         if (this.state.viewInterested) {
-            this.props.navigator.navigate('ListUsers', { users: this.state.interestedUsers, title: 'Theses users expressed interested' });
+            this.props.navigator.navigate('ListUsers', { users: this.state.interestedUsers, title: 'Theses users expressed interest' });
         }
 
         return <View style={{ flexDirection: 'column', borderColor: this.state.status.interested ? colors.green : colors.lightgray, borderWidth: 1, borderRadius: 10, width: '95%', marginTop: 30 }}>

@@ -4,7 +4,6 @@ import {
   TextInput,
   Text,
   View,
-  StyleSheet,
   TouchableOpacity,
   GestureResponderEvent,
   TouchableWithoutFeedback,

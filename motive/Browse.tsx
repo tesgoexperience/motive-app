@@ -33,11 +33,11 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
     state: StateType = { refreshingViaPulldown: false, statusList: [], browseMotives: [], manageMotives: [], view: VIEW.ALL, loading: true, stats: null }
 
     componentDidMount() {
-        this.getMotiveList(VIEW.ALL);
+        this.getItems();
     }
 
 
-    getMotiveList(view: VIEW) {
+    getItems = (view: VIEW = VIEW.ALL) => {
         let numberOfItems: number = 4;
 
         this.setState({ loading: numberOfItems > 0, browseMotives: [], manageMotives: [], statusList: [], stats: null });
@@ -65,7 +65,7 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
 
     changeView(view: VIEW) {
         this.setState({ view: view });
-        this.getMotiveList(view);
+        this.getItems(view);
     }
 
     pickBorder(field: VIEW) {
@@ -85,22 +85,22 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
 
         let motiveManage = this.state.manageMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={true} motive={motive} /> })
         let motivesBrowse = this.state.browseMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={false} motive={motive} /> })
-        let statusList = this.state.statusList.map(status => {return <StatusCard navigator={this.props.navigator} status={status}/>})
-            return < ScrollView refreshControl = {< RefreshControl refreshing = { this.state.refreshingViaPulldown } onRefresh = {() => {
+        let statusList = this.state.statusList.map(status => { return <StatusCard navigator={this.props.navigator} status={status} /> })
+        return < ScrollView refreshControl={< RefreshControl refreshing={this.state.refreshingViaPulldown} onRefresh={() => {
             this.setState({ refreshingViaPulldown: true });
-            this.getMotiveList(this.state.view);
+            this.getItems(this.state.view);
             this.setState({ refreshingViaPulldown: false });
         }
-    } />} showsVerticalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingTop: 20 }}>
-        < View style = {{ width: '100%', flexDirection: "row", justifyContent: 'space-between' }}>
+        } />} showsVerticalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingTop: 20 }}>
+            < View style={{ width: '100%', flexDirection: "row", justifyContent: 'space-between' }}>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ALL)} style={[styles.ViewButton, this.pickBorder(VIEW.ALL)]}><Text style={{ textAlign: 'center' }}>All<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.all}</Text></Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ATTENDING)} style={[styles.ViewButton, this.pickBorder(VIEW.ATTENDING)]}><Text style={{ textAlign: 'center' }}>Attending<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.attending}</Text></Text></TouchableOpacity>
                 <TouchableOpacity style={[styles.ViewButton, this.pickBorder(VIEW.FINISHED)]}><Text style={{ textAlign: 'center' }}>Finished<Text style={{ color: 'red', fontWeight: 'bold' }}> • 13</Text></Text></TouchableOpacity>
             </View >
-            <CreateStatus/>
+            <CreateStatus refresh={this.getItems} />
             {statusList}
-        { motiveManage }
-        { motivesBrowse }
+            {motiveManage}
+            {motivesBrowse}
         </ScrollView >
     }
 

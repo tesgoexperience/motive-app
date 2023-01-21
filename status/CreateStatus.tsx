@@ -9,7 +9,7 @@ import {
 } from 'react-native-popup-menu';
 import Api from '../util/Api';
 
-export class CreateStatus extends Component<{}, { status: string }>{
+export class CreateStatus extends Component<{refresh: any}, { status: string }>{
 
     state = { status: "" }
 
@@ -26,6 +26,7 @@ export class CreateStatus extends Component<{}, { status: string }>{
     shareStatus() {
         Api.post('/status/create', this.state.status ).then(()=>{
             alert("You status has been shared 🎉. Pull down to refresh");
+            this.props.refresh();
         });
     }
     
