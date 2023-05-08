@@ -73,7 +73,7 @@ export default class AuthUtils {
         // check if the access token is valid
         try {
 
-            let res = await  axios.get(API_URL + '/user/', { headers: { "Authorization": token } });
+            let res = await axios.get(API_URL + '/user/', { headers: { "Authorization": token } });
             return true;
 
         } catch (err) {
@@ -101,9 +101,16 @@ export default class AuthUtils {
         }
 
         if (! await this.checkTokenValidity(user.accessToken)) {
+
             try {
 
-                let res = await axios.post(API_URL + '/user/login', { email: user.email, password: user.password })
+                let res = await axios.post(API_URL + '/login', {}, {
+                    auth: {
+                        username: user.email,
+                        password: user.password
+                    }
+                });
+
 
                 //update the access tokens with the new info
                 user.accessToken = res.data;
@@ -120,6 +127,7 @@ export default class AuthUtils {
                     }
                 }
                 else {
+                    console.log(error)
                     return ResponseType.UNKNOWN_ERROR;
                 }
             }

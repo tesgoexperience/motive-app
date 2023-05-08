@@ -76,7 +76,6 @@ class AddFriend extends Component<PropType, StateType> {
                 <TouchableOpacity onPress={() => { this.refresh() }} style={{ width: '27%', height: 50, borderWidth: 1, borderColor: '#69FFAA', borderRadius: 5, justifyContent: 'center' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Search</Text></TouchableOpacity>
             </View>
 
-
             <ScrollView style={styles.resultsView}>
                 {this.renderResults()}
             </ScrollView>

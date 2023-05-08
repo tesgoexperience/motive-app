@@ -36,8 +36,8 @@ class FriendCard extends Component<PropType, StateType> {
             this.props.parentRefresh();
         }
         ).catch((err) => {
-            let res = err.response.data;
-            if (res.message == 'You cannot request yourself.') {
+
+            if (err.response.data == 'You cannot request yourself.') {
                 Alert.alert('You cannot request yourself....weird');
                 this.setState({ loading: false });
 

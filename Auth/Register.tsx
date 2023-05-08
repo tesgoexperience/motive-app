@@ -20,7 +20,8 @@ type MyState = {
     user: {
         username: string,
         password: string,
-        email: string
+        email: string,
+        confirmPassword: string
     },
     confirmPassword: string,
     errors: Array<FIELDS>,
@@ -34,7 +35,7 @@ type MyProps = {
 
 class Register extends Component<MyProps, MyState>{
 
-    state: MyState = { user: { username: "", password: "", email: "" }, confirmPassword: "", errors: new Array(), loading: false };
+    state: MyState = { user: { username: "", password: "", email: "", confirmPassword: "" }, confirmPassword: "", errors: new Array(), loading: false };
     private readonly POST_REGISTRATION_AUTH_FAILED: string = "Post registration login attempt failed.";
     private readonly UNKNOWN_REGISTRATION_ERROR: string = "Registration failed for an unknown error.";
     private readonly UNKNOWN_REGISTRATION_SERVER_ERROR: string = "Unknown server error during registration";
@@ -60,7 +61,7 @@ class Register extends Component<MyProps, MyState>{
             valid = false;
         }
 
-        if (this.state.confirmPassword !== this.state.user.password) {
+        if (this.state.user.confirmPassword !== this.state.user.password) {
             errors.push(FIELDS.CONFIRM_PASSWORD);
             valid = false;
         }
@@ -69,7 +70,7 @@ class Register extends Component<MyProps, MyState>{
 
             this.setState({ loading: true });
 
-            Api.post("/user/register", this.state.user).then(res => {
+            Api.post("/register", this.state.user).then(res => {
                 // since the registration was successful, log the user in with the details provided during registration
                 let user: UserAuthDetails = { email: this.state.user.email, password: this.state.user.password, accessToken: "" }
                 AuthUtils.attemptAuthentication(user).then(res => {
@@ -137,7 +138,7 @@ class Register extends Component<MyProps, MyState>{
                         <Text style={CommonStyle.label}>Confirm Password: </Text>
                         <TextInput style={[CommonStyle.input, this.pickStyle(FIELDS.CONFIRM_PASSWORD)]}
                             secureTextEntry={true}
-                            onChange={(e) => { this.setState({ confirmPassword: e.nativeEvent.text }) }}
+                            onChange={(e) => { this.setState({ user: { ...this.state.user,confirmPassword: e.nativeEvent.text } }) }}
                             placeholder="Confirm Password"
                         />
                         <Text style={CommonStyle.hint}>Please re-enter your password</Text>
