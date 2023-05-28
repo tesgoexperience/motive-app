@@ -56,6 +56,7 @@ class App extends Component<{}, MyState>{
         }
         let show;
         if (!this.state.authenticated) {
+            
             show = (
 
                 <NavigationContainer independent={true}>
@@ -97,8 +98,6 @@ class App extends Component<{}, MyState>{
         }
 
         return (<MenuProvider><View style={styles.container}>{show}</View></MenuProvider>)
-
-
     }
 }
 

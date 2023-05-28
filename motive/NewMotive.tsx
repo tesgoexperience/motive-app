@@ -11,6 +11,7 @@ import Api from "../util/Api";
 import { Loading } from "../util/Loading";
 import UserSelect from '../util/UserSelect'
 import { ThemeColors } from "react-navigation";
+import MotiveHelper from "../util/MotiveHelper";
 type CreateMotive = {
     title: string,
     description: string,
@@ -43,6 +44,7 @@ type StateType = {
 class NewMotive extends Component<PropType, StateType> {
 
     state: StateType = { friendList: [], selectSpecificUsers: false, errors: [], pickTime: false, showDatePicker: false, motive: { title: "", description: "", start: new Date(), specificallyInvited: [], attendanceType: 'EVERYONE' }, loading: false };
+
 
     submitMotive() {
         let valid: boolean = true;
@@ -179,10 +181,10 @@ class NewMotive extends Component<PropType, StateType> {
                             <View style={{ flex: 0, flexDirection: 'row' }}>
                                 {/* If you are switching from pick time to pick date, don't hide the the date picker */}
                                 <TouchableOpacity style={{ width: "70%", marginRight: "5%" }} onPress={() => this.setState({ showDatePicker: this.state.pickTime ? true : !this.state.showDatePicker, pickTime: false })}>
-                                    <Text style={[CommonStyle.input, this.pickBorder(FIELDS.START)]}> {this.state.motive.start.getDate() + "/" + (this.state.motive.start.getMonth() + 1) + "/" + this.state.motive.start.getFullYear()} </Text>
+                                    <Text style={[CommonStyle.input, this.pickBorder(FIELDS.START)]}> {MotiveHelper.formatDate(this.state.motive.start)} </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ width: "25%" }} onPress={() => this.setState({ showDatePicker: this.state.pickTime ? !this.state.showDatePicker : true, pickTime: true })}>
-                                    <Text style={[CommonStyle.input, this.pickBorder(FIELDS.START)]}> {this.state.motive.start.getHours() + ":" + this.state.motive.start.getMinutes()} </Text>
+                                    <Text style={[CommonStyle.input, this.pickBorder(FIELDS.START)]}> {MotiveHelper.formatTime(this.state.motive.start)} </Text>
                                 </TouchableOpacity>
                             </View>
                             {datePicker}

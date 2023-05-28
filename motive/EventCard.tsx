@@ -1,36 +1,8 @@
 import { Component } from 'react';
 
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import Api from '../util/Api';
-import { Loading } from '../util/Loading';
 import { Profile } from '../util/Profile';
-import { CommonStyle } from "../util/Styles";
-import AuthUtils from '../util/AuthUtils';
-
-export type MotiveBrowse = {
-    ownerUsername: string,
-    title: string,
-    description: string,
-    start: number,
-    id: string,
-    confirmedAttendanceAnonymous: number,
-    confirmedAttendance: Array<string>,
-    createdOn: number
-}
-
-export type MotiveManage = MotiveBrowse & {
-    requests: Array<string>,
-    SpecificallyInvited: Array<string>
-}
-
-export type Motive =  MotiveManage | MotiveBrowse;
-
-type Attendance = {
-    status: string,
-    user: string,
-    anonymous: boolean,
-    id: string,
-}
+import MotiveHelper, { Attendance, Motive } from '../util/MotiveHelper';
 
 type PropType = {
     motive: Motive,
@@ -47,68 +19,17 @@ type StateType = {
 }
 class EventCard extends Component<PropType, StateType>{
     state: StateType = { attendance: null, loading: true, hasAttendance: false, expanded: false };
+    helper: MotiveHelper;
 
-    private formatDate(unix_timestamp: number): string {
-        let date = new Date(unix_timestamp);
-        let addZero = (val: number) => { return val < 10 ? "0" + val : val }
-        return date.getDate() + "/" + addZero(date.getMonth() + 1) + "/" + addZero(date.getFullYear()) + "  " + addZero(date.getHours()) + ":" + addZero(date.getMinutes());
+    constructor(props: PropType) {
+        super(props);
+        this.helper = new MotiveHelper(this.props.motive, this)
     }
 
     componentDidMount(): void {
-        this.loadAttendance();
+        this.helper.loadMyAttendance();
     }
-
-    private loadAttendance() {
-        this.setState({ loading: true });
-
-        Api.get('/attendance/?motiveId=' + this.props.motive.id).then((res) => {
-            if (res.data == '' || res.data == null) {
-                this.setState({ loading: false, hasAttendance: false });
-            } else {
-                this.setState({ loading: false, attendance: res.data, hasAttendance: true });
-            }
-        })
-    }
-    private cancelAttendance() {
-        this.setState({ loading: true });
-        Api.post('/attendance/cancel', this.props.motive.id).then(() => {
-            this.loadAttendance();
-        });
-    }
-
-    private requestAttendance(anonymous: boolean) {
-        this.setState({ loading: true });
-        Api.post('/attendance/request', { motive: this.props.motive.id, anonymous: anonymous }).then((res) => {
-            this.loadAttendance();
-        });
-    }
-
-    private getOptions() {
-
-        if (this.state.loading) {
-            return <View style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5 }}><Loading /></View>
-        }
-
-        if (this.props.owner) {
-            return <TouchableOpacity onPress={() => this.requestAttendance(false)} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Edit</Text></TouchableOpacity>
-        }
-
-        if (!this.state.hasAttendance) {
-            return <><TouchableOpacity onPress={() => this.requestAttendance(false)} style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Join</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => this.requestAttendance(true)} style={{ width: '10%', borderRadius: 5, padding: 8, backgroundColor: '#69FFAA' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity></>
-        }
-
-        let incognitoIcon;
-        if (this.state.attendance?.anonymous) {
-            incognitoIcon = <TouchableOpacity style={{ width: '10%', borderRadius: 5, padding: 8 }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>🕵️</Text></TouchableOpacity>;
-        }
-
-        return <><Text style={{ borderWidth: 1, borderRadius: 5, padding: 8, marginRight: 5, color: '#c7c7c7', borderColor: '#e7e7e7' }}>{this.state.attendance?.status}</Text><TouchableOpacity onPress={() => this.cancelAttendance()} style={[{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5 }, CommonStyle.redBackground]}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Cancel</Text></TouchableOpacity>
-            {incognitoIcon}
-        </>
-
-    }
-
+    
     public getAttendeeList() {
         let motive = this.props.motive;
 
@@ -127,6 +48,11 @@ class EventCard extends Component<PropType, StateType>{
         }
     }
 
+    public getRequestCount() {
+        if (this.props.owner) {
+            return <View style={{ marginRight: 15 }}><Text>✋ Requests <Text style={{ color: 'red', fontWeight: 'bold' }}> •  {this.props.motive.requests.length}</Text></Text></View>
+        }
+    }
     render() {
         let motive = this.props.motive;
 
@@ -134,19 +60,18 @@ class EventCard extends Component<PropType, StateType>{
             <TouchableOpacity onPress={() => { this.props.openMotive(this.props.motive, this.props.owner) }}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
                     <View style={{ margin: 5, width: "50%" }}>{<Profile imageUrl={"https://source.unsplash.com/random/?portrait"} username={motive.ownerUsername} />}</View>
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-                        <View style={{ marginRight: 15 }}><Text>👥 : {motive.confirmedAttendance.length + motive.confirmedAttendanceAnonymous}</Text></View>
-                        <View style={{ marginRight: 20 }}><Text>😀 : {motive.confirmedAttendance.length + motive.confirmedAttendanceAnonymous}</Text></View>
-                    </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', padding: 20, borderTopWidth: 1, borderColor: '#E2E2E2' }}>
                     <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>{motive.title}</Text>
                     <View style={{ borderRadius: 5, marginBottom: 10 }}>
                         <View style={{ height: 4, backgroundColor: '#69FFAA', width: '100%' }}></View>
-                        <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold', margin: 10 }}>{this.formatDate(motive.start)}</Text></View>
-                    {/* {this.getAttendeeList()} */}
-                    <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'flex-end', marginTop: 20 }}>
-                        {this.getOptions()}
+                        <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold', margin: 10 }}>{MotiveHelper.formatDate(motive.start)}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
+                        <View style={{ flex: 1, flexDirection: 'row', marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ marginRight: 15 }}><Text>👥 Friends<Text style={{ color: 'red', fontWeight: 'bold' }}> • {motive.confirmedAttendance.length + motive.confirmedAttendanceAnonymous}</Text> </Text></View>
+                            <View style={{ marginRight: 20 }}><Text>😀 Total <Text style={{ color: 'red', fontWeight: 'bold' }}> •  {motive.confirmedAttendance.length + motive.confirmedAttendanceAnonymous}</Text></Text></View>
+                            {this.getRequestCount()}
+                        </View>
                     </View>
                 </View>
             </TouchableOpacity>

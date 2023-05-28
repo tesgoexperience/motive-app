@@ -1,11 +1,12 @@
 import { Component } from 'react';
 
 import { ScrollView, View, Text, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
-import EventCard, { Motive, MotiveBrowse, MotiveManage } from './EventCard';
+import EventCard from './EventCard';
 import Api from '../util/Api';
 import { Loading } from '../util/Loading'
 import { CreateStatus } from '../status/CreateStatus';
 import { Status, StatusCard } from '../status/StatusCard';
+import { Motive } from '../util/MotiveHelper';
 
 enum VIEW {
     ALL = 'all',
@@ -20,8 +21,8 @@ type Stats = {
 }
 type StateType = {
     refreshingViaPulldown: boolean,
-    browseMotives: Array<MotiveBrowse>,
-    manageMotives: Array<MotiveManage>,
+    browseMotives: Array<Motive>,
+    manageMotives: Array<Motive>,
     statusList: Array<Status>
     view: VIEW,
     loading: boolean,

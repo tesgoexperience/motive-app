@@ -22,7 +22,6 @@ type StateType = {
     refreshingViaPulldown: boolean
 }
 
-
 enum USER_ACTIONS {
     ACCEPT = '/accept',
     REJECT = '/reject',

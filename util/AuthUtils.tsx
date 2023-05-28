@@ -52,7 +52,7 @@ export default class AuthUtils {
 
         return user;
     }
-
+    
     public static logout() {
         AuthUtils.cleanAuth();
     }
