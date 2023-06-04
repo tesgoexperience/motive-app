@@ -41,25 +41,30 @@ class ViewMotive extends Component<PropType, StateType>{
 
         return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>
             {
-                <UserListOptions size={1} title="Requests" users={this.helper.motive.requests.map(user => {
+                <UserListOptions key="requests"  size={1} title="Requests" users={this.helper.motive.managementDetails.requests.map(user => {
                     return {
                         username: user, options: [{ color: 'GOOD', onclick: () => { this.helper.respondToRequest(true, user) }, title: 'Accept' },
                         { color: 'BAD', onclick: () => { this.helper.respondToRequest(false, user) }, title: 'Reject' }]
                     }
-                })} />
+                })}
+                
+                
+                  />
             }</View>
     }
 
+
     getAttendees() {
-        if (this.state.owner) {
+       if (this.state.owner) {
             return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>
-                {<UserListOptions size={1} title="Attendees"
-                    users={this.helper.motive.confirmedAttendance.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => { this.helper.removeAttendee(user) }, title: 'Remove' }] } })} />
-                }</View>
+                {<UserListOptions key="Attendees" size={1} title="Attendees"
+                    users={this.helper.motive.attendance.concat(this.helper.motive.managementDetails.anonymousAttendees).map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => { this.helper.removeAttendee(user) }, title: 'Remove' }] } })} />
+                }
+                </View>
         }
         return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>
-            {<UserListOptions size={1} title="Attendees"
-                users={this.helper.motive.confirmedAttendance.map(user => { return { username: user, options: [] } })} />
+            {<UserListOptions key="Attendees" size={1} title="Attendees"
+                users={this.helper.motive.attendance.map(user => { return { username: user, options: [] } })} />
             }</View>
     }
 
@@ -105,6 +110,7 @@ class ViewMotive extends Component<PropType, StateType>{
             </View>
         </View>
     }
+
     render() {
         if (this.state.loading) {
             return <Loading></Loading>
@@ -116,8 +122,8 @@ class ViewMotive extends Component<PropType, StateType>{
                 <View style={{ flex: 0, marginTop: 20, marginBottom: 10, height: 40, flexDirection: "row", justifyContent: 'space-between' }}>
                     <View style={{ width: '50%' }}>{<Profile imageUrl={"https://source.unsplash.com/random/?portrait"} username={motive.ownerUsername} />}</View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-                        <View style={{ marginRight: 15 }}><Text>👥 : {motive.confirmedAttendance.length + motive.confirmedAttendanceAnonymous}</Text></View>
-                        <View style={{ marginRight: 20 }}><Text>😀 : {motive.confirmedAttendance.length + motive.confirmedAttendanceAnonymous}</Text></View>
+                        <View style={{ marginRight: 15 }}><Text>👥 : {motive.attendance.length}</Text></View>
+                        <View style={{ marginRight: 20 }}><Text>😀 : {motive.attendance.length}</Text></View>
                     </View>
                 </View>
                 <View style={{ marginTop: 20, paddingTop: 15, borderTopWidth: 1, borderTopColor: 'lightgray' }}><Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>{motive.title}</Text>

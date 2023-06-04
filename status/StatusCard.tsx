@@ -3,12 +3,9 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { Profile } from '../util/Profile';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import UserList from '../util/UserList';
 import Api from '../util/Api';
 import { colors } from '../util/Styles';
 import DateUtil from '../util/DateUtil';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Loading } from '../util/Loading';
 
 export type Status = {
     id: number,
@@ -43,12 +40,10 @@ export class StatusCard extends Component<{ status: Status, navigator: any}, { s
                 });
             })
         }
-        
-      
-      
     }
 
     getOptions() {
+        
         // if owner, return list of interested people 
         if (this.state.status.belongsToMe) {
             return <View style={{ padding: 5 }}><TouchableOpacity onPress={() => { this.setState({ viewInterested: true }) }} style={{ width: '100%', borderRadius: 5, padding: 4, borderColor: '#69FFAA', borderWidth: 1 }}><Text style={{ textAlign: 'center', fontWeight: '600' }}>View Interested<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.interestedUsers.length}</Text></Text></TouchableOpacity>

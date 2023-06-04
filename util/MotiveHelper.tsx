@@ -1,7 +1,5 @@
 import React from "react";
 import Api from "./Api";
-import EventCard from "../motive/EventCard";
-
 
 export type Attendance = {
     status: string,
@@ -10,19 +8,23 @@ export type Attendance = {
     id: string,
 }
 
-export type Motive ={
+export type ManagementDetails = {
+    requests: Array<string>,
+    SpecificallyInvited: Array<string>,
+    anonymousAttendees: Array<string>
+}
+
+export type Motive = {
+    id: string,
+    owner: boolean
     ownerUsername: string,
     title: string,
     description: string,
     start: number,
-    id: string,
-    confirmedAttendanceAnonymous: number,
-    confirmedAttendance: Array<string>,
     createdOn: number,
-    requests: Array<string>,
-    SpecificallyInvited: Array<string>
+    attendance: Array<string>
+    managementDetails: ManagementDetails
 }
-
 
 export default class MotiveHelper {
     public motive: Motive;
@@ -39,13 +41,14 @@ export default class MotiveHelper {
         });
     }
 
-    public refreshMotive(){
+    public refreshMotive() {
         this.comp.setState({ loading: true });
-        Api.get('/motive/get?motive='+this.motive.id).then((res) => {
+        Api.get('/motive/get?motive=' + this.motive.id).then((res) => {
             this.motive = res.data;
             this.comp.setState({ loading: false });
         });
     }
+
     public loadMyAttendance() {
         this.comp.setState({ loading: true });
 
@@ -59,9 +62,9 @@ export default class MotiveHelper {
     }
 
 
-    public removeAttendee(user:string) {
+    public removeAttendee(user: string) {
         this.comp.setState({ loading: true });
-        Api.post('/attendance/remove',{ attendeeUsername:user,motiveId: this.motive.id}).then(() => { 
+        Api.post('/attendance/remove', { attendeeUsername: user, motiveId: this.motive.id }).then(() => {
             this.refreshMotive();
         });
     }
@@ -73,10 +76,10 @@ export default class MotiveHelper {
         });
     }
 
-    public respondToRequest(accept:boolean, attendee:string) {
+    public respondToRequest(accept: boolean, attendee: string) {
         this.comp.setState({ loading: true });
-        let decision : String = accept ? "accept" : "reject";
-        Api.post('/attendance/'+decision, { attendeeUsername:attendee,motiveId: this.motive.id}).then(() => {
+        let decision: String = accept ? "accept" : "reject";
+        Api.post('/attendance/' + decision, { attendeeUsername: attendee, motiveId: this.motive.id }).then(() => {
             this.refreshMotive();
         });
     }

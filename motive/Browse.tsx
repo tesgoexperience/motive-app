@@ -41,6 +41,7 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
     getItems = (view: VIEW = VIEW.ALL) => {
         let numberOfItems: number = 4;
 
+        
         this.setState({ loading: numberOfItems > 0, browseMotives: [], manageMotives: [], statusList: [], stats: null });
 
         Api.get('/motive/' + view).then((res) => {
@@ -78,6 +79,7 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
         }
     }
 
+    
     render() {
 
         if (this.state.loading) {
@@ -86,12 +88,14 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
 
         let motiveManage = this.state.manageMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={true} motive={motive} /> })
         let motivesBrowse = this.state.browseMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={false} motive={motive} /> })
-        let statusList = this.state.statusList.map(status => { return <StatusCard navigator={this.props.navigator} status={status} /> })
+        let statusList = this.state.statusList.map(status => { return <StatusCard key={status.id} navigator={this.props.navigator} status={status} /> })
+
         return < ScrollView refreshControl={< RefreshControl refreshing={this.state.refreshingViaPulldown} onRefresh={() => {
             this.setState({ refreshingViaPulldown: true });
             this.getItems(this.state.view);
             this.setState({ refreshingViaPulldown: false });
         }
+        
         } />} showsVerticalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingTop: 20 }}>
             < View style={{ width: '100%', flexDirection: "row", justifyContent: 'space-between' }}>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ALL)} style={[styles.ViewButton, this.pickBorder(VIEW.ALL)]}><Text style={{ textAlign: 'center' }}>All<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.all}</Text></Text></TouchableOpacity>
