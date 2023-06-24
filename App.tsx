@@ -10,6 +10,7 @@ import AuthUtils, { ResponseType, UserAuthDetails } from './util/AuthUtils'
 import { Loading } from './util/Loading';
 import Friend from './friend/Friend';
 import Home from './Home/Home';
+import { decode, encode } from 'base-64'
 import AddFriend from './friend/AddFriend';
 import NewMotive from './motive/NewMotive';
 import ViewMotive from './motive/ViewMotive';
@@ -22,6 +23,15 @@ type MyState = {
     userDetails: UserAuthDetails | null,
     authenticated: boolean
 };
+
+// https://github.com/axios/axios/issues/2235
+if (!global.btoa) {
+    global.btoa = encode;
+}
+
+if (!global.atob) {
+    global.atob = decode;
+}
 
 class App extends Component<{}, MyState>{
 
@@ -56,7 +66,7 @@ class App extends Component<{}, MyState>{
         }
         let show;
         if (!this.state.authenticated) {
-            
+
             show = (
 
                 <NavigationContainer independent={true}>
@@ -79,21 +89,21 @@ class App extends Component<{}, MyState>{
             );
         } else {
             show = <NavigationContainer independent={true}>
-                    <Stack.Navigator screenOptions={{
-                        headerShown: false,
-                        header: () => null,
-                        contentStyle: { backgroundColor: 'white', padding: 20, paddingTop: 30 },
-                    }}>
-                        <Stack.Screen name="Home">
-                            {(props) => <Home {...props} reauthenticateApp={this.authenticate} />}
-                        </Stack.Screen>
-                        <Stack.Screen name="Friends" component={Friend} />
-                        <Stack.Screen name="AddFriend" component={AddFriend} />
-                        <Stack.Screen name="NewMotive" component={NewMotive} />
-                        <Stack.Screen name="ViewMotive" component={ViewMotive} />
-                        <Stack.Screen name="ListUsers" component={UsersList} />
-                    </Stack.Navigator>
-                </NavigationContainer>
+                <Stack.Navigator screenOptions={{
+                    headerShown: false,
+                    header: () => null,
+                    contentStyle: { backgroundColor: 'white', padding: 20, paddingTop: 30 },
+                }}>
+                    <Stack.Screen name="Home">
+                        {(props) => <Home {...props} reauthenticateApp={this.authenticate} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="Friends" component={Friend} />
+                    <Stack.Screen name="AddFriend" component={AddFriend} />
+                    <Stack.Screen name="NewMotive" component={NewMotive} />
+                    <Stack.Screen name="ViewMotive" component={ViewMotive} />
+                    <Stack.Screen name="ListUsers" component={UsersList} />
+                </Stack.Navigator>
+            </NavigationContainer>
 
         }
 
