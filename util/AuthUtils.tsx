@@ -2,13 +2,20 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { setItemAsync, deleteItemAsync, getItemAsync } from 'expo-secure-store';
 import { AuthError } from "./Errors";
 
-export type User = {
+
+// For authentication of user
+export type UserAuthDetails = {
     email: string,
     password: string,
     username?: string,
     accessToken: string,
 }
 
+// To be used by components to show the context user
+export type simpleUserDetails = {
+    email: string,
+    username: string,
+}
 
 export enum ResponseType {
     INVALID_CREDENTIALS,
@@ -27,9 +34,8 @@ export default class AuthUtils {
     public static readonly AUTH_STORE_ERROR_MSG = "No user authentication is stored"
     public static readonly AUTH_STORE_MISSING_FIELDS_ERROR_MSG = "Stored user is missing fields"
 
-
     // TODO getting the user from the drive every time might cause performance issues, consider a private class variable
-    public static async getStoredUser(): Promise<User> {
+    public static async getStoredUser(): Promise<UserAuthDetails> {
 
         let strUser = await getItemAsync(AuthUtils.USER_STORAGE_KEY);
 
@@ -37,7 +43,7 @@ export default class AuthUtils {
             throw new AuthError(AuthUtils.AUTH_STORE_ERROR_MSG);
         }
 
-        let user: User = JSON.parse(strUser);
+        let user: UserAuthDetails = JSON.parse(strUser);
 
         // check the user object has an access token
         if (user.accessToken == undefined) {
@@ -46,16 +52,16 @@ export default class AuthUtils {
 
         return user;
     }
-
+    
     public static logout() {
-        AuthUtils.deleteToken();
+        AuthUtils.cleanAuth();
     }
 
-    private static deleteToken() {
-                deleteItemAsync(AuthUtils.USER_STORAGE_KEY);
+    private static cleanAuth() {
+        deleteItemAsync(AuthUtils.USER_STORAGE_KEY);
     }
 
-    public static setStoredUser(user: User) {
+    public static setStoredUser(user: UserAuthDetails) {
         setItemAsync(AuthUtils.USER_STORAGE_KEY, JSON.stringify(user));
     }
 
@@ -68,11 +74,10 @@ export default class AuthUtils {
         try {
 
             let res = await axios.get(API_URL + '/user/', { headers: { "Authorization": token } });
-
             return true;
 
         } catch (err) {
-            AuthUtils.deleteToken();
+            AuthUtils.cleanAuth();
             return false;
         }
     }
@@ -84,7 +89,7 @@ export default class AuthUtils {
      * if an access token is invalid, the stored user email and pass will be used to retrieve another
      * if that also fails, then the stored user is cleared, an error is thrown and then user is sent to login/register
      */
-    public static async attemptAuthentication(user?: User): Promise<ResponseType> {
+    public static async attemptAuthentication(user?: UserAuthDetails): Promise<ResponseType> {
 
         // if a user wasn't passed in, get user details from storage
         if (user == undefined) {
@@ -96,9 +101,16 @@ export default class AuthUtils {
         }
 
         if (! await this.checkTokenValidity(user.accessToken)) {
+
             try {
 
-                let res = await axios.post(API_URL + '/user/login', { email: user.email, password: user.password })
+                let res = await axios.post(API_URL + '/login', {}, {
+                    auth: {
+                        username: user.email,
+                        password: user.password
+                    }
+                });
+
 
                 //update the access tokens with the new info
                 user.accessToken = res.data;
@@ -115,6 +127,7 @@ export default class AuthUtils {
                     }
                 }
                 else {
+                    console.log(error)
                     return ResponseType.UNKNOWN_ERROR;
                 }
             }

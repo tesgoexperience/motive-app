@@ -1,14 +1,13 @@
-import React, { Component } from "react";
+import { Component } from "react";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParams } from "../navigation/RootStackParams";
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity} from "react-native";
-import { Searchbar} from 'react-native-paper';
+import { RootStackParams } from "../util/RootStackParams";
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput } from "react-native";
 import Api from "../util/Api";
 import { Loading } from "../util/Loading";
-import { buttonNeutral, goodBackground } from '../util/GeneralStyles';
 import FriendCard from "./FriendCard";
 import FRIEND_RELATION from "./FriendRelation";
+import { BackButton } from "../util/BackButton";
 
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "AddFriend">;
@@ -34,7 +33,7 @@ class AddFriend extends Component<PropType, StateType> {
     }
 
     public refresh() {
-        this.setState({loading: true })
+        this.setState({ loading: true })
         Api.get('/friendship/search?search=' + this.state.searchTerm).then(r => {
 
             // convert the string relation property into an enum
@@ -56,7 +55,7 @@ class AddFriend extends Component<PropType, StateType> {
         }
 
         if (this.state.results.length == 0) {
-            return <View style={{justifyContent: "center" }}><Text style={{ textAlign: "center" }}>No results</Text></View>
+            return <View style={{ justifyContent: "center" }}><Text style={{ textAlign: "center" }}>No results</Text></View>
         }
 
         let resultList = <View>{this.state.results.map((user: User) => {
@@ -67,20 +66,15 @@ class AddFriend extends Component<PropType, StateType> {
     }
 
     public render() {
-        return <View style={{ paddingTop: 10 }}>
-            <View style={{
-                flex: 1,
-                flexDirection: "row"
-            }}>
-                <Searchbar
-                    placeholder=""
-                    onChangeText={(v) => {this.setState({searchTerm: v})}}
-                    value={this.state.searchTerm}
-                    style={{ width: "70%", height: 50 }}
+        return <View style={{ padding: 10 }}>
+            {<BackButton navigation={this.props.navigation} />}
+            <View style={{ width: '100%', height: 100, flex: 1, flexDirection: 'row', backgroundColor: 'red' }}>
+                <TextInput style={{ width: '70%', borderWidth: 1, height: 50, padding: 5, paddingStart: 10, fontSize: 20, borderRadius: 10, borderColor: "#E2E2E2", marginRight: "3%" }}
+                    onChange={(e) => this.setState({ searchTerm: e.nativeEvent.text })}
+                    placeholder="Enter your friends username"
                 />
-                <TouchableOpacity onPress={()=>{this.refresh()}} style={[buttonNeutral,goodBackground, { width: "25%", height: 50, padding:5, marginLeft: 5, justifyContent: 'center' }]}><Text style={{textAlign: 'center', fontWeight: 'bold'}}>Search</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { this.refresh() }} style={{ width: '27%', height: 50, borderWidth: 1, borderColor: '#69FFAA', borderRadius: 5, justifyContent: 'center' }}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Search</Text></TouchableOpacity>
             </View>
-
             <ScrollView style={styles.resultsView}>
                 {this.renderResults()}
             </ScrollView>

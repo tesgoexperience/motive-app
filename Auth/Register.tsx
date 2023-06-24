@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
-import { TextInput, Text, View, StyleSheet, TouchableOpacity, GestureResponderEvent, ScrollView, Alert } from 'react-native';
+import { Component } from 'react';
+import { TextInput, Text, View, StyleSheet, TouchableOpacity, GestureResponderEvent, ScrollView, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParams } from '../navigation/RootStackParams';
+import { RootStackParams } from '../util/RootStackParams';
 import Api from '../util/Api'
-import { ResponseType, User } from '../util/AuthUtils'
+import { ResponseType, UserAuthDetails } from '../util/AuthUtils'
 import { AuthError } from '../util/Errors';
 import AuthUtils from '../util/AuthUtils';
 import { Loading } from '../util/Loading';
 import { AxiosError } from 'axios';
+import { CommonStyle } from '../util/Styles';
 enum FIELDS {
     EMAIL,
     PASSWORD,
@@ -19,7 +20,8 @@ type MyState = {
     user: {
         username: string,
         password: string,
-        email: string
+        email: string,
+        confirmPassword: string
     },
     confirmPassword: string,
     errors: Array<FIELDS>,
@@ -33,7 +35,7 @@ type MyProps = {
 
 class Register extends Component<MyProps, MyState>{
 
-    state: MyState = { user: { username: "", password: "", email: "" }, confirmPassword: "", errors: new Array(), loading: false};
+    state: MyState = { user: { username: "", password: "", email: "", confirmPassword: "" }, confirmPassword: "", errors: new Array(), loading: false };
     private readonly POST_REGISTRATION_AUTH_FAILED: string = "Post registration login attempt failed.";
     private readonly UNKNOWN_REGISTRATION_ERROR: string = "Registration failed for an unknown error.";
     private readonly UNKNOWN_REGISTRATION_SERVER_ERROR: string = "Unknown server error during registration";
@@ -59,7 +61,7 @@ class Register extends Component<MyProps, MyState>{
             valid = false;
         }
 
-        if (this.state.confirmPassword !== this.state.user.password) {
+        if (this.state.user.confirmPassword !== this.state.user.password) {
             errors.push(FIELDS.CONFIRM_PASSWORD);
             valid = false;
         }
@@ -68,9 +70,9 @@ class Register extends Component<MyProps, MyState>{
 
             this.setState({ loading: true });
 
-            Api.post("/user/register", this.state.user).then(res => {
+            Api.post("/register", this.state.user).then(res => {
                 // since the registration was successful, log the user in with the details provided during registration
-                let user: User = { email: this.state.user.email, password: this.state.user.password, accessToken: "" }
+                let user: UserAuthDetails = { email: this.state.user.email, password: this.state.user.password, accessToken: "" }
                 AuthUtils.attemptAuthentication(user).then(res => {
                     if (res == ResponseType.OK) {
                         this.props.reauthenticateApp();
@@ -113,109 +115,54 @@ class Register extends Component<MyProps, MyState>{
         }
 
         return (
-            <ScrollView style={styles.view}>
-                <Text style={styles.header}> Register </Text>
-                <View >
-                    <Text style={styles.label}>Username: </Text>
-                    <TextInput style={[styles.input, this.pickStyle(FIELDS.USERNAME)]} onChange={(e) => { this.setState({ user: { ...this.state.user, username: e.nativeEvent.text } }) }} placeholder="Enter Username" />
-                    <Text style={styles.inputHint}>Pick a unique username. Must be 5+ chars</Text>
+            <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss() }}>
+                <ScrollView contentContainerStyle={CommonStyle.formView}>
+                    <View >
+                        <Text style={CommonStyle.label}>Username: </Text>
+                        <TextInput style={[CommonStyle.input, this.pickStyle(FIELDS.USERNAME)]} onChange={(e) => { this.setState({ user: { ...this.state.user, username: e.nativeEvent.text } }) }} placeholder="Enter Username" />
+                        <Text style={CommonStyle.hint}>Pick a unique username. Must be 5+ chars</Text>
 
-                    <Text style={styles.label}>Email: </Text>
-                    {/* if email is taken show alert */}
-                    <TextInput style={[styles.input, this.pickStyle(FIELDS.EMAIL)]} onChange={(e) => { this.setState({ user: { ...this.state.user, email: e.nativeEvent.text } }) }} placeholder="Enter Email" />
-                    <Text style={styles.inputHint}>Please enter a valid email that has not already been used. </Text>
+                        <Text style={CommonStyle.label}>Email: </Text>
+                        {/* if email is taken show alert */}
+                        <TextInput style={[CommonStyle.input, this.pickStyle(FIELDS.EMAIL)]} onChange={(e) => { this.setState({ user: { ...this.state.user, email: e.nativeEvent.text } }) }} placeholder="Enter Email" />
+                        <Text style={CommonStyle.hint}>Please enter a valid email that has not already been used. </Text>
 
-                    <Text style={styles.label}>Password: </Text>
-                    <TextInput style={[styles.input, this.pickStyle(FIELDS.PASSWORD)]}
-                        secureTextEntry={true}
-                        onChange={(e) => { this.setState({ user: { ...this.state.user, password: e.nativeEvent.text } }) }}
-                        placeholder="Enter Password"
-                    />
-                    <Text style={styles.inputHint}>Your password must be 8+ characters long and have an at least one of each uppercase, lowercase and special characters. </Text>
+                        <Text style={CommonStyle.label}>Password: </Text>
+                        <TextInput style={[CommonStyle.input, this.pickStyle(FIELDS.PASSWORD)]}
+                            secureTextEntry={true}
+                            onChange={(e) => { this.setState({ user: { ...this.state.user, password: e.nativeEvent.text } }) }}
+                            placeholder="Enter Password"
+                        />
+                        <Text style={CommonStyle.hint}>Your password must be 8+ characters long and have at least one of each uppercase, lowercase and special characters. </Text>
 
-                    <Text style={styles.label}>Confirm Password: </Text>
-                    <TextInput style={[styles.input, this.pickStyle(FIELDS.CONFIRM_PASSWORD)]}
-                        secureTextEntry={true}
-                        onChange={(e) => { this.setState({ confirmPassword: e.nativeEvent.text }) }}
-                        placeholder="Confirm Password"
-                    />
-                    <Text style={styles.inputHint}>Please re-enter you password</Text>
+                        <Text style={CommonStyle.label}>Confirm Password: </Text>
+                        <TextInput style={[CommonStyle.input, this.pickStyle(FIELDS.CONFIRM_PASSWORD)]}
+                            secureTextEntry={true}
+                            onChange={(e) => { this.setState({ user: { ...this.state.user,confirmPassword: e.nativeEvent.text } }) }}
+                            placeholder="Confirm Password"
+                        />
+                        <Text style={CommonStyle.hint}>Please re-enter your password</Text>
 
+                        <TouchableOpacity
+                            style={[CommonStyle.greenBorder, CommonStyle.greenBackground, { padding: 10, marginTop: 20, marginBottom: 20 }]}
+                            onPress={this.registerPressed}
+                        >
+                            <Text style={{ textAlign: 'center' }}> Register </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={[CommonStyle.hint, { color: "#74776B", textAlign: "center", margin: 15 }]}> Do you already have an account? </Text>
                     <TouchableOpacity
-                        style={styles.button}
-                        onPress={this.registerPressed}
+                        style={[CommonStyle.greenBorder, CommonStyle.greenBackground, { padding: 10, marginTop: 20, marginBottom: 20 }]}
+                        onPress={() => { this.props.navigation.navigate('Login') }}
                     >
-                        <Text> Register </Text>
+                        <Text style={{ textAlign: 'center' }}> Login </Text>
                     </TouchableOpacity>
-                </View>
-                <Text style={styles.hint}> Do you already have an account? </Text>
-                <TouchableOpacity
-                    style={styles.loginButton}
-                    onPress={() => { this.props.navigation.navigate('Login') }}
-                >
-                    <Text> Login </Text>
-                </TouchableOpacity>
-            </ScrollView>
+                </ScrollView>
+            </TouchableWithoutFeedback>
+
         );
     }
 }
 
 export default Register;
-
-const styles = StyleSheet.create({
-    header: {
-        color: "#1A1A0F",
-        textAlign: 'center',
-        fontSize: 30,
-        paddingBottom: 10,
-        marginBottom: 10,
-        marginTop: 20
-    },
-    label: {
-        color: "#1A1A0F",
-        fontSize: 15,
-        fontWeight: 'bold',
-        marginBottom: 5
-    },
-    hint: {
-        color: "#74776B",
-        textAlign: 'center',
-        marginTop: 10,
-        marginBottom: 10,
-        padding: 15,
-        backgroundColor: "#F8F8F2"
-    },
-    inputHint: {
-        color: "#757575",
-        marginTop: 2,
-        marginBottom: 10,
-        padding: 5,
-        fontSize: 15
-    },
-    input: {
-        padding: 10,
-        fontSize: 15,
-        borderWidth: 1
-    },
-    button: {
-        padding: 15,
-        fontSize: 15,
-        borderWidth: 1,
-        textAlign: 'center',
-        fontWeight: "bold",
-        backgroundColor: "#8FE388"
-    },
-    loginButton: {
-        padding: 15,
-        fontSize: 15,
-        borderWidth: 1,
-        textAlign: 'center',
-        fontWeight: "bold",
-        backgroundColor: "#88c6e3"
-
-    },
-    view: {
-        padding: 20
-    }
-});
 

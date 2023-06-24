@@ -1,13 +1,13 @@
-import React, { Component } from "react";
+import { Component } from "react";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParams } from "../navigation/RootStackParams";
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, RefreshControl } from "react-native";
-import { good } from "../util/GeneralStyles";
+import { RootStackParams } from "../util/RootStackParams";
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, RefreshControl, BackHandler, Alert } from "react-native";
 import Api from "../util/Api";
 import { Loading } from "../util/Loading";
-import FriendCard from "./FriendCard";
-import FRIEND_RELATION from "./FriendRelation";
+import { BackButton } from "../util/BackButton";
+import { CommonStyle } from "../util/Styles";
+import UserListOptions, { User } from "../util/UserListOptions";
 
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "Friends">;
@@ -15,14 +15,22 @@ type PropType = {
 
 type StateType = {
     searchTerm: string,
-    socialSummary: any,
+    socialSummary: { requestsSent: Array<string>, requestsReceived: Array<string>, friends: Array<string> },
     loading: boolean,
     showSearchResults: boolean,
     refreshingViaPulldown: boolean
 }
 
+enum USER_ACTIONS {
+    ACCEPT = '/accept',
+    REJECT = '/reject',
+    REMOVE_FRIEND = '/remove',
+    REQUEST = '/request'
+
+}
+
 class Friend extends Component<PropType, StateType> {
-    state: StateType = { searchTerm: '', socialSummary: null, loading: true, showSearchResults: false, refreshingViaPulldown: false };
+    state: StateType = { searchTerm: '', socialSummary: { requestsSent: [], requestsReceived: [], friends: [] }, loading: true, showSearchResults: false, refreshingViaPulldown: false };
 
     constructor(props: PropType) {
         super(props);
@@ -38,6 +46,7 @@ class Friend extends Component<PropType, StateType> {
         this.refresh();
         this.setState({ refreshingViaPulldown: false });
     }
+
     public refresh() {
         this.setState({ loading: true });
         Api.get('/friendship/').then(r => {
@@ -45,46 +54,30 @@ class Friend extends Component<PropType, StateType> {
         })
     }
 
-    public renderFriendContainer(users: [], relation: FRIEND_RELATION) {
-
-        let titleText = '';
-
-        switch (relation) {
-            case FRIEND_RELATION.REQUESTED_BY_YOU:
-                titleText = 'Pending requests'
-                break;
-            case FRIEND_RELATION.REQUESTED_BY_THEM:
-                titleText = 'Friend Requests'
-                break;
-            case FRIEND_RELATION.FRIEND:
-                titleText = 'Friends'
-                break;
+    public changeRelation(username: string, action: USER_ACTIONS) {
+        this.setState({ loading: true });
+        Api.post('friendship' + action + '?username=' + username).then(() => {
+            this.setState({ loading: false });
+            this.refresh();
         }
+        ).catch((err) => {
+            let res = err.response.data;
+            if (res.message == 'You cannot request yourself.') {
+                Alert.alert('You cannot request yourself....weirdo');
+                this.setState({ loading: false });
 
-        titleText = titleText + ' • ' + users.length;
-
-        let title = <Text style={styles.sectionHeader}>{titleText}</Text>;
-        if (users == null || users.length == 0) {
-            return <View style={styles.view}>
-                {title}
-                <Text style={{ marginLeft: 2, padding: 5 }}>No Results</Text>
-            </View>
-        }
-
-        let friendCards = users.map((username: string) => { return (<FriendCard key={username} parentRefresh={this.refresh} relation={relation} username={username} />) });
-        return <View style={styles.view}>
-            {title}
-            {friendCards}
-        </View>
-
+            }
+        });
     }
 
     public renderFriends() {
-        return <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={this.state.refreshingViaPulldown} onRefresh={this.refreshPulldown} />} style={styles.resultsView}>
-            {this.renderFriendContainer(this.state.socialSummary.requestsForUser, FRIEND_RELATION.REQUESTED_BY_THEM)}
-            {this.renderFriendContainer(this.state.socialSummary.requestsByUser, FRIEND_RELATION.REQUESTED_BY_YOU)}
-            {this.renderFriendContainer(this.state.socialSummary.friends, FRIEND_RELATION.FRIEND)}
-        </ScrollView>
+        return <View style={{ flex: 0, flexDirection: 'column', justifyContent: 'space-between' }}>
+            <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshingViaPulldown} onRefresh={this.refreshPulldown} />} contentContainerStyle={{ height: '100%', paddingTop: 20 }}>
+                <View style={{ marginBottom: 50 }}>{<UserListOptions key="requestsReceived" size={1} title="Requests Received" users={this.state.socialSummary.requestsReceived.map(user => { return { username: user, options: [{ color: 'GOOD', onclick: () => this.changeRelation(user, USER_ACTIONS.ACCEPT), title: 'Accept' }, { color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REJECT), title: 'Reject' }] } })} />}</View>
+                <View style={{ marginBottom: 50 }}>{<UserListOptions key="requestsSent" size={1} title="Requests Sent" users={this.state.socialSummary.requestsSent.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REMOVE_FRIEND), title: 'Remove' }] } })} />}</View>
+                <View style={{ marginBottom: 50 }}>{<UserListOptions key="friends" size={1} title="Friends" users={this.state.socialSummary.friends.map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => this.changeRelation(user, USER_ACTIONS.REMOVE_FRIEND), title: 'Remove' }] } })} />}</View>
+            </ScrollView>
+        </View>
     }
 
     public render() {
@@ -93,11 +86,9 @@ class Friend extends Component<PropType, StateType> {
             return <Loading />
         }
 
-        return <View style={{ marginTop: 20 }}>
-            <View style={{ width: '95%', flexDirection: "row", justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#E2E2E2', paddingBottom: 10 }}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriend')} style={{  borderWidth: 1, borderRadius: 5, padding: 8, borderColor: good }}><Text style={{ textAlign: 'center', fontWeight: '600' }}>Find Friends</Text></TouchableOpacity>
-                <TouchableOpacity style={{  borderWidth: 1, borderRadius: 5, padding: 8, borderColor: good }}><Text style={{ textAlign: 'center', fontWeight: '600' }}>Manage Circles</Text></TouchableOpacity>
-            </View>
+        return <View style={{ marginTop: 5 }}>
+            {<BackButton navigation={this.props.navigation} />}
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFriend')} style={[CommonStyle.greenBorder, CommonStyle.greenBackground, { padding: 10, marginTop: 20, marginBottom: 20 }]}><Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Add/Search People</Text></TouchableOpacity>
             {this.renderFriends()}
         </View>
     }
@@ -105,26 +96,3 @@ class Friend extends Component<PropType, StateType> {
 
 export default Friend
 
-const styles = StyleSheet.create({
-    view: {
-        padding: 5,
-        paddingTop: 15
-    },
-    resultsView: {
-        padding: 10,
-        paddingTop: 15
-    },
-    sectionHeader: {
-        fontWeight: 'bold',
-        paddingBottom: 5,
-        borderBottomWidth: 2,
-        borderBottomColor: '#D3D3D3',
-    },
-    userContainer: {
-        flex: 1,
-        flexDirection: "row",
-        backgroundColor: "#ffffff",
-        padding: 20,
-        width: '100%'
-    }
-});

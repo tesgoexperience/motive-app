@@ -1,18 +1,20 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import {
   Alert,
   TextInput,
   Text,
   View,
-  StyleSheet,
   TouchableOpacity,
   GestureResponderEvent,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParams } from "../navigation/RootStackParams";
+import { RootStackParams } from "../util/RootStackParams";
 
-import AuthUtils, { ResponseType, User } from "../util/AuthUtils";
+import AuthUtils, { ResponseType, UserAuthDetails } from "../util/AuthUtils";
 import { Loading } from "../util/Loading";
+import { CommonStyle } from '../util/Styles'
 
 type MyProps = {
   navigation: NativeStackNavigationProp<RootStackParams, "Login">,
@@ -20,7 +22,7 @@ type MyProps = {
 };
 
 type MyState = {
-  user: User,
+  user: UserAuthDetails,
   loading: boolean
 }
 class Login extends Component<MyProps, MyState> {
@@ -52,82 +54,41 @@ class Login extends Component<MyProps, MyState> {
     }
 
     return (
-      <View style={styles.view}>
-        <Text style={styles.header}> LOGIN </Text>
-        <View>
-          <TextInput
-            style={styles.input}
-            onChange={(e) => { this.setState({ user: { ...this.state.user, email: e.nativeEvent.text } }) }}
-            placeholder='Enter Email'
-          />
-          <TextInput
-            style={styles.input}
-            secureTextEntry={true}
-            onChange={(e) => {
-              this.setState({ user: { ...this.state.user, password: e.nativeEvent.text } })
+      <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss() }}>
+        <View style={CommonStyle.formView}>
+          <View>
+            <Text style={CommonStyle.label}> Email: </Text>
+            <TextInput
+              style={CommonStyle.input}
+              onChange={(e) => { this.setState({ user: { ...this.state.user, email: e.nativeEvent.text } }) }}
+              placeholder='Enter Email'
+            />
+            <Text style={CommonStyle.label}> Password: </Text>
+            <TextInput
+              style={CommonStyle.input}
+              secureTextEntry={true}
+              onChange={(e) => {
+                this.setState({ user: { ...this.state.user, password: e.nativeEvent.text } })
+              }}
+              placeholder='Enter Password'
+            />
+            <TouchableOpacity style={[CommonStyle.greenBorder, CommonStyle.greenBackground, { padding: 10, marginTop: 20, marginBottom: 20 }]} onPress={this.loginPressed}>
+              <Text style={{ textAlign: 'center' }}> Login</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={[CommonStyle.hint, { color: "#74776B", textAlign: "center", padding: 15 }]}> Don't have an account?  </Text>
+          <TouchableOpacity
+            style={[CommonStyle.greenBorder, CommonStyle.greenBackground, { padding: 10, marginTop: 20, marginBottom: 20 }]}
+            onPress={() => {
+              this.props.navigation.navigate("Register");
             }}
-            placeholder='Enter Password'
-          />
-          <TouchableOpacity style={styles.button} onPress={this.loginPressed}>
-            <Text> Login</Text>
+          >
+            <Text style={{ textAlign: 'center' }}> Register </Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.hint}> Do you already have an account? </Text>
-        <TouchableOpacity
-          style={styles.registerBUtton}
-          onPress={() => {
-            this.props.navigation.navigate("Register");
-          }}
-        >
-          <Text> Register </Text>
-        </TouchableOpacity>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
 
 export default Login;
-
-const styles = StyleSheet.create({
-  header: {
-    color: "#1A1A0F",
-    textAlign: "center",
-    fontSize: 30,
-    paddingBottom: 10,
-    marginBottom: 10,
-    marginTop: 20
-  },
-  hint: {
-    color: "#74776B",
-    textAlign: "center",
-    marginBottom: 10,
-    marginTop: 10,
-    padding: 15,
-    backgroundColor: "#F8F8F2",
-  },
-  input: {
-    padding: 15,
-    fontSize: 15,
-    borderWidth: 1,
-    marginBottom: 10,
-  },
-  button: {
-    padding: 15,
-    fontSize: 15,
-    borderWidth: 1,
-    textAlign: "center",
-    fontWeight: "bold",
-    backgroundColor: "#8FE388",
-  },
-  registerBUtton: {
-    padding: 15,
-    fontSize: 15,
-    borderWidth: 1,
-    textAlign: "center",
-    fontWeight: "bold",
-    backgroundColor: "#88c6e3",
-  },
-  view: {
-    padding: 10
-  },
-});

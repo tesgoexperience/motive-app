@@ -1,23 +1,37 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
-import {StyleSheet, View } from 'react-native';
+import { Alert, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator} from '@react-navigation/native-stack';
-import { RootStackParams } from './navigation/RootStackParams';
-import AuthUtils, { ResponseType, User } from './util/AuthUtils'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { RootStackParams } from './util/RootStackParams';
+import AuthUtils, { ResponseType, UserAuthDetails } from './util/AuthUtils'
 import { Loading } from './util/Loading';
 import Friend from './friend/Friend';
 import Home from './Home/Home';
+import { decode, encode } from 'base-64'
 import AddFriend from './friend/AddFriend';
+import NewMotive from './motive/NewMotive';
+import ViewMotive from './motive/ViewMotive';
+import { MenuProvider } from 'react-native-popup-menu';
+import UsersList from './util/UserList';
 const Stack = createNativeStackNavigator<RootStackParams>();
 
 type MyState = {
     loading: boolean,
-    userDetails: User | null,
+    userDetails: UserAuthDetails | null,
     authenticated: boolean
 };
+
+// https://github.com/axios/axios/issues/2235
+if (!global.btoa) {
+    global.btoa = encode;
+}
+
+if (!global.atob) {
+    global.atob = decode;
+}
 
 class App extends Component<{}, MyState>{
 
@@ -39,63 +53,61 @@ class App extends Component<{}, MyState>{
                 })
 
             } else {
-                this.setState({ loading: false});
+                this.setState({ loading: false });
             }
         }
         ).catch(err => {
-            this.setState({ loading: false});
+            this.setState({ loading: false });
         })
     }
     public render() {
         if (this.state.loading) {
             return <Loading />
         }
-
+        let show;
         if (!this.state.authenticated) {
-            return (
 
-                <View style={styles.container}>
-                    <NavigationContainer independent={true}>
-                        <Stack.Navigator screenOptions={{
-                            headerShown: false,
-                            header: () => null,
-                            contentStyle: { backgroundColor: 'white' },
+            show = (
 
-                        }}>
-                            {/* the {...props} passes in props from stack screen like navigation */}
-                            <Stack.Screen name="Login">
-                                {(props) => <Login {...props} reauthenticateApp={this.authenticate} />}
-                            </Stack.Screen>
-                            <Stack.Screen name="Register">
-                                {(props) => <Register {...props} reauthenticateApp={this.authenticate} />}
-                            </Stack.Screen>
-                        </Stack.Navigator>
-                    </NavigationContainer>
-                </View>
-
-            );
-        } else {
-            return <View style={styles.container}>
                 <NavigationContainer independent={true}>
                     <Stack.Navigator screenOptions={{
                         headerShown: false,
                         header: () => null,
                         contentStyle: { backgroundColor: 'white' },
-
                     }}>
-                        <Stack.Screen name="Home">
-                                {(props) => <Home {...props} reauthenticateApp={this.authenticate} />}
-                            </Stack.Screen>
-                        <Stack.Screen name="Friends" component={Friend} />
-                        <Stack.Screen name="AddFriend" component={AddFriend} />
-
+                        {/* the {...props} passes in props from stack screen like navigation */}
+                        <Stack.Screen name="Login">
+                            {(props) => <Login {...props} reauthenticateApp={this.authenticate} />}
+                        </Stack.Screen>
+                        <Stack.Screen name="Register">
+                            {(props) => <Register {...props} reauthenticateApp={this.authenticate} />}
+                        </Stack.Screen>
                     </Stack.Navigator>
                 </NavigationContainer>
-            </View>
 
+
+            );
+        } else {
+            show = <NavigationContainer independent={true}>
+                <Stack.Navigator screenOptions={{
+                    headerShown: false,
+                    header: () => null,
+                    contentStyle: { backgroundColor: 'white', padding: 20, paddingTop: 30 },
+                }}>
+                    <Stack.Screen name="Home">
+                        {(props) => <Home {...props} reauthenticateApp={this.authenticate} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="Friends" component={Friend} />
+                    <Stack.Screen name="AddFriend" component={AddFriend} />
+                    <Stack.Screen name="NewMotive" component={NewMotive} />
+                    <Stack.Screen name="ViewMotive" component={ViewMotive} />
+                    <Stack.Screen name="ListUsers" component={UsersList} />
+                </Stack.Navigator>
+            </NavigationContainer>
 
         }
 
+        return (<MenuProvider><View style={styles.container}>{show}</View></MenuProvider>)
     }
 }
 
@@ -104,22 +116,5 @@ export default App;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        margin: 15,
-        marginTop: 30
-    },
-    content_container: {
-        flex: 1,
-        justifyContent: "center",
-        backgroundColor: '#FFFFF',
-        content: 'center',
-        color: "#1A1A0F",
-    },
-    navbar: {
-        flex: 1,
-        padding: 5,
-        marginTop: 20,
-        flexDirection: "row",
-        color: "#1A1A0F",
-        justifyContent: 'space-evenly'
     }
 });
