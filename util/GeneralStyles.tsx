@@ -11,13 +11,17 @@ export const buttonNeutral = {
 }
 
 
-export const badColor = {
+export const badBackground = {
     backgroundColor : '#e32749',
     color: '#ffffff'
 }
 
 
-export const goodColor = {
+export const goodBackground = {
     backgroundColor : '#94ffb0',
     color: '#000000'
 }
+
+export const good = '#94ffb0';
+export const bad = '#e32749';
+export const warning = '#d19900';

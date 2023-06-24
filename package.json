@@ -10,12 +10,11 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@react-native-community/datetimepicker": "^6.7.1",
-    "@react-navigation/native": "6.0.10",
-    "@react-navigation/native-stack": "6.6.1",
-    "@react-navigation/stack": "6.2.1",
-    "axios": "^1.4.0",
-    "base-64": "^1.0.0",
+    "@ngneat/falso": "^6.1.0",
+    "@react-navigation/native": "^6.0.10",
+    "@react-navigation/native-stack": "^6.6.2",
+    "@react-navigation/stack": "^6.2.1",
+    "axios": "^0.27.2",
     "csstype": "^3.1.0",
     "expo": "~45.0.0",
     "expo-secure-store": "~11.2.0",

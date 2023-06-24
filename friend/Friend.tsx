@@ -13,7 +13,6 @@ type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "Friends">;
 };
 
-
 type StateType = {
     searchTerm: string,
     socialSummary: { requestsSent: Array<string>, requestsReceived: Array<string>, friends: Array<string> },
@@ -93,7 +92,6 @@ class Friend extends Component<PropType, StateType> {
             {this.renderFriends()}
         </View>
     }
-
 }
 
 export default Friend
