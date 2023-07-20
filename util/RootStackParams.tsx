@@ -1,5 +1,3 @@
-import { Motive } from "../motive/EventCard";
-
 export type RootStackParams = {
     Login: undefined;
     Register: undefined;
@@ -7,7 +5,7 @@ export type RootStackParams = {
     Friends: undefined;
     AddFriend: undefined;
     NewMotive: undefined;
-    ViewMotive: { motive: Motive, owner: boolean };
+    ViewMotive: {owner: boolean };
     ListUsers: { users: Array<String> }
 
 };
