@@ -2,7 +2,10 @@
   "expo": {
     "slug": "motive-app",
     "name": "motive-app",
-    "sdkVersion": "46.0.0",
+    "sdkVersion": "47.0.0",
+    "android": {
+      "package": "com.abdiidris.motiveapp"
+    },
     "extra": {
       "eas": {
         "projectId": "b7784069-d520-4d62-8f42-813ff014a4a5"
