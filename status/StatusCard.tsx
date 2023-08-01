@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { Profile } from '../util/Profile';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+// import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Api from '../util/Api';
 import { colors } from '../util/Styles';
 import DateUtil from '../util/DateUtil';
@@ -76,7 +76,7 @@ export class StatusCard extends Component<{ status: Status, navigator: any}, { s
         return <View style={{ flexDirection: 'column', borderColor: this.state.status.interested ? colors.green : colors.lightgray, borderWidth: 1, borderRadius: 10, width: '95%', marginTop: 30 }}>
             <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'space-between', margin: 10, marginLeft: 15, marginTop: 20 }}>
                 {<Profile subtext={DateUtil.diff(this.state.status.timePosted, new Date())} imageUrl={"https://source.unsplash.com/random/?portrait"} username={this.state.status.owner} />}
-                <Menu>
+                {/* <Menu>
                     <MenuTrigger><Entypo name="dots-three-vertical" size={15} color="#919191" /></MenuTrigger>
                     <MenuOptions>
                         <MenuOption onSelect={() => alert(`Test`)} text='Edit viewers list' />
@@ -84,7 +84,7 @@ export class StatusCard extends Component<{ status: Status, navigator: any}, { s
                             <Text style={{ color: 'red' }}>Delete</Text>
                         </MenuOption>
                     </MenuOptions>
-                </Menu>
+                </Menu> */}
             </View>
             <View style={{ flex: 3, flexDirection: 'row', justifyContent: 'center', margin: 5, marginBottom: 5, padding: 10 }}>
                 <Text style={{ flexShrink: 1, fontSize: 20, fontWeight: '400' }}>{this.state.status.title}</Text>

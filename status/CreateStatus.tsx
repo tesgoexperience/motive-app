@@ -1,12 +1,12 @@
 import { Component } from 'react';
 import { TouchableOpacity, View, Text, TextInput } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import {
-    Menu,
-    MenuOptions,
-    MenuOption,
-    MenuTrigger,
-} from 'react-native-popup-menu';
+// import {
+//     Menu,
+//     MenuOptions,
+//     MenuOption,
+//     MenuTrigger,
+// } from 'react-native-popup-menu';
 import Api from '../util/Api';
 
 export class CreateStatus extends Component<{refresh: any}, { status: string }>{
@@ -33,7 +33,7 @@ export class CreateStatus extends Component<{refresh: any}, { status: string }>{
     render() {
         return <View style={{ flexDirection: 'column', justifyContent: 'space-between', borderColor: 'lightgray', borderWidth: 1, borderRadius: 10, width: '95%', marginTop: 30 }}>
             <View style={{flex:1, width:"100%", justifyContent:'flex-end', alignItems:'flex-end', paddingTop:10, paddingRight:10}}>
-                <Menu>
+                {/* <Menu>
                     <MenuTrigger><Entypo name="dots-three-vertical" size={15} color="#919191" /></MenuTrigger>
                     <MenuOptions>
                         <MenuOption onSelect={() => alert(`Test`)} text='Edit viewers list' />
@@ -41,7 +41,7 @@ export class CreateStatus extends Component<{refresh: any}, { status: string }>{
                             <Text style={{ color: 'red' }}>Delete</Text>
                         </MenuOption>
                     </MenuOptions>
-                </Menu>
+                </Menu> */}
             </View>
 
             <TextInput

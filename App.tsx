@@ -14,7 +14,7 @@ import { decode, encode } from 'base-64'
 import AddFriend from './friend/AddFriend';
 import NewMotive from './motive/NewMotive';
 import ViewMotive from './motive/ViewMotive';
-import { MenuProvider } from 'react-native-popup-menu';
+// import { MenuProvider } from 'react-native-popup-menu';
 import UsersList from './util/UserList';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
@@ -147,7 +147,9 @@ class App extends Component<{}, MyState>{
 
         }
 
-        return (<MenuProvider><View style={styles.container}>{show}</View></MenuProvider>)
+        // return (<MenuProvider><View style={styles.container}>{show}</View></MenuProvider>)
+        return (<View style={styles.container}>{show}</View>)
+
     }
 }
 
