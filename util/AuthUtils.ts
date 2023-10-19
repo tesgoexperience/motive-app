@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { setItemAsync, deleteItemAsync, getItemAsync } from 'expo-secure-store';
 import { AuthError } from "./Errors";
-
+import NotificationUtil from "./NotificationUtil";
 
 // For authentication of user
 export type UserAuthDetails = {
@@ -52,7 +52,7 @@ export default class AuthUtils {
 
         return user;
     }
-    
+
     public static logout() {
         AuthUtils.cleanAuth();
     }
@@ -111,11 +111,12 @@ export default class AuthUtils {
                     }
                 });
 
-
                 //update the access tokens with the new info
                 user.accessToken = res.data;
+                
                 AuthUtils.setStoredUser(user);
-
+                // after a login, attempt to request a notification token
+                new NotificationUtil().registerForPushNotificationsAsync();
                 return ResponseType.OK;
             }
             catch (error: unknown) {
@@ -136,6 +137,7 @@ export default class AuthUtils {
             return ResponseType.OK;
         }
     }
+
 }
 
 

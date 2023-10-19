@@ -33,7 +33,9 @@ class ViewMotive extends Component<PropType, StateType>{
 
     componentDidMount(): void {
         this.helper.loadMyAttendance();
+        this.helper.refreshMotive();
     }
+    
     getRequests() {
         if (!this.state.owner) {
             return;
@@ -52,7 +54,6 @@ class ViewMotive extends Component<PropType, StateType>{
                   />
             }</View>
     }
-
 
     getAttendees() {
        if (this.state.owner) {

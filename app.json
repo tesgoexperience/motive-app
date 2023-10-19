@@ -2,7 +2,33 @@
   "expo": {
     "slug": "motive-app",
     "name": "motive-app",
-    "sdkVersion": "46.0.0"
+    "sdkVersion": "47.0.0",
+    "android": {
+      "package": "com.abdiidris.motiveapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b7784069-d520-4d62-8f42-813ff014a4a5"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.abdiidris.motiveapp"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 31,
+            "targetSdkVersion": 31,
+            "buildToolsVersion": "31.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "15.5.99"
+          }
+        }
+      ]
+    ]
   },
   "name": "motive-app"
 }

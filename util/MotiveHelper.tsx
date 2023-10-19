@@ -1,5 +1,6 @@
 import React from "react";
 import Api from "./Api";
+import { Platform } from "react-native";
 
 export type Attendance = {
     status: string,
@@ -97,8 +98,8 @@ export default class MotiveHelper {
         let d = new Date(date);
         return MotiveHelper.addZero(d.getDate()) + "/" + MotiveHelper.addZero(d.getMonth() + 1) + "/" + MotiveHelper.addZero(d.getFullYear());
     }
+
     public static formatTimeAndDate(date: number | Date): string {
         return MotiveHelper.formatDate(date) + "  " + MotiveHelper.formatTime(date);
     }
-
 }

@@ -19,6 +19,7 @@ type Stats = {
     finished: number,
     all: number
 }
+
 type StateType = {
     refreshingViaPulldown: boolean,
     browseMotives: Array<Motive>,
@@ -36,7 +37,6 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
     componentDidMount() {
         this.getItems();
     }
-
 
     getItems = (view: VIEW = VIEW.ALL) => {
         let numberOfItems: number = 4;

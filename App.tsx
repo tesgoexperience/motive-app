@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-import { Alert, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,10 +14,11 @@ import { decode, encode } from 'base-64'
 import AddFriend from './friend/AddFriend';
 import NewMotive from './motive/NewMotive';
 import ViewMotive from './motive/ViewMotive';
-import { MenuProvider } from 'react-native-popup-menu';
+// import { MenuProvider } from 'react-native-popup-menu';
 import UsersList from './util/UserList';
-const Stack = createNativeStackNavigator<RootStackParams>();
 
+
+const Stack = createNativeStackNavigator<RootStackParams>();
 type MyState = {
     loading: boolean,
     userDetails: UserAuthDetails | null,
@@ -37,6 +38,7 @@ class App extends Component<{}, MyState>{
 
     state: MyState = { loading: true, userDetails: null, authenticated: false };
 
+   
     public componentDidMount() {
         this.authenticate();
     }
@@ -107,7 +109,9 @@ class App extends Component<{}, MyState>{
 
         }
 
-        return (<MenuProvider><View style={styles.container}>{show}</View></MenuProvider>)
+        // return (<MenuProvider><View style={styles.container}>{show}</View></MenuProvider>)
+        return (<View style={styles.container}>{show}</View>)
+
     }
 }
 
@@ -118,3 +122,5 @@ const styles = StyleSheet.create({
         flex: 1,
     }
 });
+
+

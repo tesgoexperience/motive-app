@@ -65,7 +65,6 @@ class Friend extends Component<PropType, StateType> {
             if (res.message == 'You cannot request yourself.') {
                 Alert.alert('You cannot request yourself....weirdo');
                 this.setState({ loading: false });
-
             }
         });
     }
