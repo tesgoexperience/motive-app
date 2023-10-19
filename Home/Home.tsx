@@ -3,7 +3,7 @@ import { Component } from 'react';
 
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import {NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { buttonNeutral, goodColor } from '../util/GeneralStyles';
+import { buttonNeutral,goodBackground } from '../util/GeneralStyles';
 import { RootStackParams } from '../util/RootStackParams';
 import AuthUtils, { UserAuthDetails } from '../util/AuthUtils';
 import Browse from '../motive/Browse';
@@ -46,7 +46,7 @@ class Home extends Component<PropType, StateType>{
 
         return <View style={styles.container}>
             <View style={styles.navbar}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('NewMotive')} style={[buttonNeutral,goodColor]}><Text>New Motive</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('NewMotive')} style={[buttonNeutral,goodBackground]}><Text>New Motive</Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('Friends')} style={buttonNeutral}><Text>👥 Friends</Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => { AuthUtils.logout(); this.props.reauthenticateApp() }} style={[buttonNeutral]}><Text>⚙️ {this.state.username}</Text></TouchableOpacity>
             </View>

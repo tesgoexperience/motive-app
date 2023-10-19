@@ -41,6 +41,7 @@ class Login extends Component<MyProps, MyState> {
       else if (res == ResponseType.INVALID_CREDENTIALS) {
         Alert.alert("Invalid email/password");
       } else {
+        // Alert.alert())
         Alert.alert("Unknown error ocurred");
       }
     })

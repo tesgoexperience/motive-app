@@ -25,7 +25,6 @@ export class CreateStatus extends Component<{refresh: any}, { status: string }>{
 
     shareStatus() {
         Api.post('/status/create', this.state.status ).then(()=>{
-            alert("You status has been shared 🎉. Pull down to refresh");
             this.props.refresh();
         });
     }
