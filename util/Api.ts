@@ -2,7 +2,7 @@ import axios from "axios";
 
 import AuthUtils, {ResponseType, UserAuthDetails} from './AuthUtils'
 
-const API_URL = "http://192.168.0.116:8080"//process.env.REST_API;
+const API_URL = process.env.REST_API;
 
 const Api = axios.create({
     baseURL: API_URL,
