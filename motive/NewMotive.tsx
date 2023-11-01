@@ -10,12 +10,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Api from "../util/Api";
 import { Loading } from "../util/Loading";
 import UserSelect from '../util/UserSelect'
-import { ThemeColors } from "react-navigation";
 import MotiveHelper from "../util/MotiveHelper";
 type CreateMotive = {
     title: string,
     description: string,
     start: Date,
+    end: Date,
     specificallyInvited: Array<String>,
     attendanceType: 'EVERYONE' | 'FRIENDS' | 'SPECIFIC_FRIENDS'
 }
@@ -24,7 +24,8 @@ enum FIELDS {
     TITLE,
     DESCRIPTION,
     START,
-    SPECIFIC_FRIENDS
+    SPECIFIC_FRIENDS,
+    END
 }
 
 type PropType = {
@@ -33,7 +34,8 @@ type PropType = {
 
 type StateType = {
     motive: CreateMotive,
-    showDatePicker: boolean,
+    showStartDatePicker: boolean,
+    showEndDatePicker: boolean,
     pickTime: boolean,
     errors: Array<FIELDS>,
     loading: boolean,
@@ -43,8 +45,7 @@ type StateType = {
 
 class NewMotive extends Component<PropType, StateType> {
 
-    state: StateType = { friendList: [], selectSpecificUsers: false, errors: [], pickTime: false, showDatePicker: false, motive: { title: "", description: "", start: new Date(), specificallyInvited: [], attendanceType: 'EVERYONE' }, loading: false };
-
+    state: StateType = { friendList: [], selectSpecificUsers: false, errors: [], pickTime: false, showStartDatePicker: false,showEndDatePicker: false, motive: { title: "", description: "", start: new Date(), specificallyInvited: [], attendanceType: 'EVERYONE', end: new Date() }, loading: false };
 
     submitMotive() {
         let valid: boolean = true;
@@ -135,6 +136,15 @@ class NewMotive extends Component<PropType, StateType> {
         return selectedList;
     }
 
+    getDateSelector(start: boolean) {
+        let displayMode: any = (this.state.pickTime ? 'time' : 'date');
+        let updateDate = (date: Date) => {
+            start ? this.setState({ motive: { ...this.state.motive, start: date } }) :  this.setState({ motive: { ...this.state.motive, end: date } });
+        }
+
+        return <DateTimePicker mode={displayMode} textColor="#000000" display="spinner" style={{ width: 300, height: 300 }} value={ start ? this.state.motive.start : this.state.motive.end} onChange={(event: any, date?: Date) => date ? updateDate(date) : null} />
+
+    }
     public render() {
         if (this.state.loading) {
             return <Loading />
@@ -146,14 +156,17 @@ class NewMotive extends Component<PropType, StateType> {
             }} done={this.selectionComplete} userList={this.getFriendList()} />
         }
 
-        let datePicker;
-        if (this.state.showDatePicker) {
-            let displayMode: any = (this.state.pickTime ? 'time' : 'date');
-            datePicker = <DateTimePicker mode={displayMode} textColor="#000000" display="spinner" style={{ width: 300, height: 300 }} value={this.state.motive.start} onChange={(event: any, date?: Date) => date ? this.setState({ motive: { ...this.state.motive, start: date } }) : null} />
+        let startDatePicker;
+        if (this.state.showStartDatePicker) {
+            startDatePicker = this.getDateSelector(true);
+        }
+        let endDatePicker;
+        if (this.state.showEndDatePicker) {
+            endDatePicker = this.getDateSelector(false);
         }
 
         return (
-            <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); this.setState({ showDatePicker: false }) }}>
+            <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); this.setState({ showStartDatePicker: false, showEndDatePicker: false}) }}>
                 <View style={[CommonStyle.formView, { justifyContent: "flex-start", paddingTop: 0 }]}>
                     <ScrollView>
                         <BackButton navigation={this.props.navigation} />
@@ -180,14 +193,27 @@ class NewMotive extends Component<PropType, StateType> {
                             <Text style={CommonStyle.label}> Start: </Text>
                             <View style={{ flex: 0, flexDirection: 'row' }}>
                                 {/* If you are switching from pick time to pick date, don't hide the the date picker */}
-                                <TouchableOpacity style={{ width: "70%", marginRight: "5%" }} onPress={() => this.setState({ showDatePicker: this.state.pickTime ? true : !this.state.showDatePicker, pickTime: false })}>
+                                <TouchableOpacity style={{ width: "70%", marginRight: "5%" }} onPress={() => this.setState({showEndDatePicker : false, showStartDatePicker: this.state.pickTime ? true : !this.state.showStartDatePicker, pickTime: false })}>
                                     <Text style={[CommonStyle.input, this.pickBorder(FIELDS.START)]}> {MotiveHelper.formatDate(this.state.motive.start)} </Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ width: "25%" }} onPress={() => this.setState({ showDatePicker: this.state.pickTime ? !this.state.showDatePicker : true, pickTime: true })}>
+                                <TouchableOpacity style={{ width: "25%" }} onPress={() => this.setState({showEndDatePicker : false, showStartDatePicker: this.state.pickTime ? !this.state.showStartDatePicker : true, pickTime: true })}>
                                     <Text style={[CommonStyle.input, this.pickBorder(FIELDS.START)]}> {MotiveHelper.formatTime(this.state.motive.start)} </Text>
                                 </TouchableOpacity>
                             </View>
-                            {datePicker}
+                            {startDatePicker}
+                        </View>
+                        <View style={CommonStyle.inputContainer}>
+                            <Text style={CommonStyle.label}> End: </Text>
+                            <View style={{ flex: 0, flexDirection: 'row' }}>
+                                {/* If you are switching from pick time to pick date, don't hide the the date picker */}
+                                <TouchableOpacity style={{ width: "70%", marginRight: "5%" }} onPress={() => this.setState({showStartDatePicker:false, showEndDatePicker: this.state.pickTime ? true : !this.state.showEndDatePicker, pickTime: false })}>
+                                    <Text style={[CommonStyle.input, this.pickBorder(FIELDS.END)]}> {MotiveHelper.formatDate(this.state.motive.end)} </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ width: "25%" }} onPress={() => this.setState({showStartDatePicker:false, showEndDatePicker: this.state.pickTime ? !this.state.showEndDatePicker : true, pickTime: true })}>
+                                    <Text style={[CommonStyle.input, this.pickBorder(FIELDS.END)]}> {MotiveHelper.formatTime(this.state.motive.end)} </Text>
+                                </TouchableOpacity>
+                            </View>
+                            {endDatePicker}
                         </View>
                         <View style={CommonStyle.inputContainer}>
                             <Text style={CommonStyle.label}> Who can request to attend: </Text>

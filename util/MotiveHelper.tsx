@@ -22,6 +22,9 @@ export type Motive = {
     title: string,
     description: string,
     start: number,
+    end: number,
+    past: boolean,
+    cancelled: boolean,
     createdOn: number,
     attendance: Array<string>
     managementDetails: ManagementDetails

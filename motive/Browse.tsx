@@ -11,7 +11,7 @@ import { Motive } from '../util/MotiveHelper';
 enum VIEW {
     ALL = 'all',
     ATTENDING = 'attending',
-    FINISHED = 'finished'
+    PAST = 'past'
 }
 
 type Stats = {
@@ -24,6 +24,7 @@ type StateType = {
     refreshingViaPulldown: boolean,
     browseMotives: Array<Motive>,
     manageMotives: Array<Motive>,
+    pastMotives: Array<Motive>,
     statusList: Array<Status>
     view: VIEW,
     loading: boolean,
@@ -32,7 +33,7 @@ type StateType = {
 
 class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) => void, navigator: any }, StateType>{
 
-    state: StateType = { refreshingViaPulldown: false, statusList: [], browseMotives: [], manageMotives: [], view: VIEW.ALL, loading: true, stats: null }
+    state: StateType = { refreshingViaPulldown: false, statusList: [], pastMotives: [], browseMotives: [], manageMotives: [], view: VIEW.ALL, loading: true, stats: null }
 
     componentDidMount() {
         this.getItems();
@@ -42,13 +43,14 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
         let numberOfItems: number = 4;
 
         
-        this.setState({ loading: numberOfItems > 0, browseMotives: [], manageMotives: [], statusList: [], stats: null });
+        this.setState({ loading: numberOfItems > 0, browseMotives: [],pastMotives: [], manageMotives: [], statusList: [], stats: null });
 
         Api.get('/motive/' + view).then((res) => {
             numberOfItems--;
+            
             this.setState({ loading: numberOfItems > 0, browseMotives: res.data });
         });
-
+ 
         // get the stats also
         Api.get('/motive/stats').then((statsRes) => {
             numberOfItems--;
@@ -86,9 +88,17 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
             return <Loading />
         }
 
-        let motiveManage = this.state.manageMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={true} motive={motive} /> })
+        let motiveManage;
+        let statusList;
+        let createStatus;
+       
+        if (this.state.view != VIEW.PAST) {
+            motiveManage = this.state.manageMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={true} motive={motive} /> })
+            statusList = this.state.statusList.map(status => { return <StatusCard key={status.id} navigator={this.props.navigator} status={status} /> })
+            createStatus =    <CreateStatus refresh={this.getItems} />;
+        }
+
         let motivesBrowse = this.state.browseMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={false} motive={motive} /> })
-        let statusList = this.state.statusList.map(status => { return <StatusCard key={status.id} navigator={this.props.navigator} status={status} /> })
 
         return < ScrollView refreshControl={< RefreshControl refreshing={this.state.refreshingViaPulldown} onRefresh={() => {
             this.setState({ refreshingViaPulldown: true });
@@ -100,9 +110,10 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
             < View style={{ width: '100%', flexDirection: "row", justifyContent: 'space-between' }}>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ALL)} style={[styles.ViewButton, this.pickBorder(VIEW.ALL)]}><Text style={{ textAlign: 'center' }}>All<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.all}</Text></Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ATTENDING)} style={[styles.ViewButton, this.pickBorder(VIEW.ATTENDING)]}><Text style={{ textAlign: 'center' }}>Attending<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.attending}</Text></Text></TouchableOpacity>
-                <TouchableOpacity style={[styles.ViewButton, this.pickBorder(VIEW.FINISHED)]}><Text style={{ textAlign: 'center' }}>Finished<Text style={{ color: 'red', fontWeight: 'bold' }}> • 13</Text></Text></TouchableOpacity>
+                <TouchableOpacity  onPress={() => this.changeView(VIEW.PAST)} style={[styles.ViewButton, this.pickBorder(VIEW.PAST)]}><Text style={{ textAlign: 'center' }}>past
+                <Text style={{ color: 'red', fontWeight: 'bold' }}> • 13</Text></Text></TouchableOpacity>
             </View >
-            <CreateStatus refresh={this.getItems} />
+            {createStatus}
             {statusList}
             {motiveManage}
             {motivesBrowse}
