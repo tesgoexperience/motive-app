@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import {NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { buttonNeutral,goodBackground } from '../util/GeneralStyles';
 import { RootStackParams } from '../util/RootStackParams';
-import AuthUtils, { UserAuthDetails } from '../util/AuthUtils';
+import AuthUtils from '../util/AuthUtils';
 import Browse from '../motive/Browse';
 import { Motive } from '../util/MotiveHelper';
 import { Loading } from '../util/Loading';

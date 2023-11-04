@@ -5,12 +5,12 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BackButton } from "../util/BackButton";
 import { Profile } from "../util/Profile";
 import UserListOptions from "../util/UserListOptions";
-import MotiveHelper, { Attendance} from "../util/MotiveHelper";
+import MotiveHelper, { Attendance } from "../util/MotiveHelper";
 import { Loading } from "../util/Loading";
 import { colors } from "../util/Styles"
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "ViewMotive">;
-    route: any
+    route: any,
 }
 
 type StateType = {
@@ -35,7 +35,7 @@ class ViewMotive extends Component<PropType, StateType>{
         this.helper.loadMyAttendance();
         this.helper.refreshMotive();
     }
-    
+
     getRequests() {
         if (!this.state.owner) {
             return;
@@ -43,25 +43,23 @@ class ViewMotive extends Component<PropType, StateType>{
 
         return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>
             {
-                <UserListOptions key="requests"  size={1} title="Requests" users={this.helper.motive.managementDetails.requests.map(user => {
+                <UserListOptions key="requests" size={1} title="Requests" users={this.helper.motive.managementDetails.requests.map(user => {
                     return {
                         username: user, options: [{ color: 'GOOD', onclick: () => { this.helper.respondToRequest(true, user) }, title: 'Accept' },
                         { color: 'BAD', onclick: () => { this.helper.respondToRequest(false, user) }, title: 'Reject' }]
                     }
                 })}
-                
-                
-                  />
+                />
             }</View>
     }
 
     getAttendees() {
-       if (this.state.owner) {
+        if (this.state.owner) {
             return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>
                 {<UserListOptions key="Attendees" size={1} title="Attendees"
                     users={this.helper.motive.attendance.concat(this.helper.motive.managementDetails.anonymousAttendees).map(user => { return { username: user, options: [{ color: 'BAD', onclick: () => { this.helper.removeAttendee(user) }, title: 'Remove' }] } })} />
                 }
-                </View>
+            </View>
         }
         return <View style={{ marginTop: 25, paddingTop: 20, borderTopWidth: 1, borderTopColor: 'lightgray' }}>
             {<UserListOptions key="Attendees" size={1} title="Attendees"
@@ -70,7 +68,12 @@ class ViewMotive extends Component<PropType, StateType>{
     }
 
     private getOptions() {
-
+        if (this.helper.motive.past) {
+            return <View style={{ borderRadius: 5, padding:5}}><Text>This motive has finished</Text></View>
+        }
+        if (this.helper.motive.cancelled) {
+            return <View style={{ borderRadius: 5, padding: 8}}><Text>This motive was cancelled</Text></View>
+        }
         if (this.state.loading) {
             return <View style={{ width: '30%', borderRadius: 5, padding: 8, marginRight: 5 }}><Loading /></View>
         }
@@ -127,7 +130,15 @@ class ViewMotive extends Component<PropType, StateType>{
                         <View style={{ marginRight: 20 }}><Text>😀 : {motive.attendance.length}</Text></View>
                     </View>
                 </View>
-                <View style={{ marginTop: 20, paddingTop: 15, borderTopWidth: 1, borderTopColor: 'lightgray' }}><Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>{motive.title}</Text>
+                <View style={{ marginTop: 20, flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View style={{  padding: 5, backgroundColor: colors.green}}>
+                        <Text style={{ fontSize: 15, fontWeight:'bold' }}>  Start: {MotiveHelper.formatTimeAndDate(motive.start)} </Text>
+                    </View>
+                    <View style={{ padding: 5, backgroundColor: colors.red }}>
+                        <Text style={{ fontSize: 15, fontWeight:'bold' }}> Finish: {MotiveHelper.formatTimeAndDate(motive.end)} </Text>
+                    </View>
+                </View>
+                <View style={{ marginTop: 10, paddingTop: 15, borderTopWidth: 1, borderTopColor: 'lightgray' }}><Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>{motive.title}</Text>
                     <Text>{motive.description}</Text>
                 </View>
                 {this.getRequests()}

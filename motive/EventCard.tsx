@@ -48,7 +48,7 @@ class EventCard extends Component<PropType, StateType>{
                     <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 }}>{motive.title}</Text>
                     <View style={{ borderRadius: 5, marginBottom: 10 }}>
                         <View style={{ height: 4, backgroundColor: '#69FFAA', width: '100%' }}></View>
-                        <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold', margin: 10 }}>{MotiveHelper.formatDate(motive.start)}</Text></View>
+                        <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold', margin: 10 }}>{MotiveHelper.formatTimeAndDate(motive.start)}</Text></View>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
                         <View style={{ flex: 1, flexDirection: 'row', marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
                             <View style={{ marginRight: 15 }}><Text>👥 Friends<Text style={{ color: 'red', fontWeight: 'bold' }}> • {motive.attendance.length}</Text> </Text></View>
