@@ -111,7 +111,7 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ALL)} style={[styles.ViewButton, this.pickBorder(VIEW.ALL)]}><Text style={{ textAlign: 'center' }}>All<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.all}</Text></Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ATTENDING)} style={[styles.ViewButton, this.pickBorder(VIEW.ATTENDING)]}><Text style={{ textAlign: 'center' }}>Attending<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.attending}</Text></Text></TouchableOpacity>
                 <TouchableOpacity  onPress={() => this.changeView(VIEW.PAST)} style={[styles.ViewButton, this.pickBorder(VIEW.PAST)]}><Text style={{ textAlign: 'center' }}>past
-                <Text style={{ color: 'red', fontWeight: 'bold' }}> • 13</Text></Text></TouchableOpacity>
+                <Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.finished}</Text></Text></TouchableOpacity>
             </View >
             {createStatus}
             {statusList}

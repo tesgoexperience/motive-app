@@ -66,7 +66,11 @@ class NewMotive extends Component<PropType, StateType> {
             Alert.alert('Start Date/Time cannot be in the past.');
             valid = false;
         }
-
+        if (this.state.motive.end < this.state.motive.start) {
+            errors.push(FIELDS.END);
+            Alert.alert('End Date/Time cannot before start date');
+            valid = false;
+        }
         if (this.state.motive.attendanceType == 'SPECIFIC_FRIENDS' && this.state.motive.specificallyInvited.length == 0) {
             errors.push(FIELDS.SPECIFIC_FRIENDS);
             Alert.alert('If you select specifically invited, You have to select at least one friend. To select friends, Click the pencil next the "Specific Friends" button.');
