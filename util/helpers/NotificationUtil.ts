@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from "react-native";
 import { deleteItemAsync, getItemAsync, setItemAsync } from 'expo-secure-store';
-import Api from '../util/Api';
+import Api from './Api';
 
 export default class NotificationUtil {
     public static readonly NOTIFICATION_TOKEN_KEY = "NOTIFICATION_TOKEN";

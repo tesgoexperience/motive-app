@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { setItemAsync, deleteItemAsync, getItemAsync } from 'expo-secure-store';
-import { AuthError } from "./Errors";
+import { AuthError } from "../Errors";
 import NotificationUtil from "./NotificationUtil";
 
 // For authentication of user
@@ -26,7 +26,7 @@ export enum ResponseType {
     NO_CREDENTIALS
 }
 
-const API_URL = process.env.REST_API;
+const API_URL = "http://192.168.0.116:8080"//process.env.REST_API;
 
 export default class AuthUtils {
 
