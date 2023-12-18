@@ -7,7 +7,7 @@ import { Entypo } from '@expo/vector-icons';
 //     MenuOption,
 //     MenuTrigger,
 // } from 'react-native-popup-menu';
-import Api from '../util/Api';
+import Api from '../util/helpers/Api';
 
 export class CreateStatus extends Component<{refresh: any}, { status: string }>{
 

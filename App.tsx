@@ -6,7 +6,7 @@ import Register from './Auth/Register';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParams } from './util/RootStackParams';
-import AuthUtils, { ResponseType, UserAuthDetails } from './util/AuthUtils'
+import AuthUtils, { ResponseType, UserAuthDetails } from './util/helpers/AuthUtils'
 import { Loading } from './util/Loading';
 import Friend from './friend/Friend';
 import Home from './Home/Home';
@@ -16,7 +16,8 @@ import NewMotive from './motive/NewMotive';
 import ViewMotive from './motive/ViewMotive';
 // import { MenuProvider } from 'react-native-popup-menu';
 import UsersList from './util/UserList';
-
+import { Chat } from './chat/ViewChat';
+import { BrowseChat } from './chat/BrowseChat';
 
 const Stack = createNativeStackNavigator<RootStackParams>();
 type MyState = {
@@ -63,6 +64,7 @@ class App extends Component<{}, MyState>{
         })
     }
     public render() {
+  
         if (this.state.loading) {
             return <Loading />
         }
@@ -104,6 +106,7 @@ class App extends Component<{}, MyState>{
                     <Stack.Screen name="NewMotive" component={NewMotive} />
                     <Stack.Screen name="ViewMotive" component={ViewMotive} />
                     <Stack.Screen name="ListUsers" component={UsersList} />
+                    <Stack.Screen name="BrowseChat" component={BrowseChat} />
                 </Stack.Navigator>
             </NavigationContainer>
 

@@ -3,7 +3,7 @@ import { Component } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../util/RootStackParams";
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, RefreshControl, BackHandler, Alert } from "react-native";
-import Api from "../util/Api";
+import Api from "../util/helpers/Api";
 import { Loading } from "../util/Loading";
 import { BackButton } from "../util/BackButton";
 import { CommonStyle } from "../util/Styles";
@@ -26,7 +26,6 @@ enum USER_ACTIONS {
     REJECT = '/reject',
     REMOVE_FRIEND = '/remove',
     REQUEST = '/request'
-
 }
 
 class Friend extends Component<PropType, StateType> {

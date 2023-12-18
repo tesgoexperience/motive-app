@@ -1,7 +1,7 @@
 import { Component } from "react";
 
 import { View, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
-import Api from "../util/Api";
+import Api from "../util/helpers/Api";
 import { bad, badBackground, buttonNeutral, good, goodBackground } from "../util/GeneralStyles";
 import { Loading } from "../util/Loading";
 import { Profile } from "../util/Profile";

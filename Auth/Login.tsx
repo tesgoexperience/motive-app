@@ -12,7 +12,7 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../util/RootStackParams";
 
-import AuthUtils, { ResponseType, UserAuthDetails } from "../util/AuthUtils";
+import AuthUtils, { ResponseType, UserAuthDetails } from "../util/helpers/AuthUtils";
 import { Loading } from "../util/Loading";
 import { CommonStyle } from '../util/Styles'
 
@@ -41,7 +41,6 @@ class Login extends Component<MyProps, MyState> {
       else if (res == ResponseType.INVALID_CREDENTIALS) {
         Alert.alert("Invalid email/password");
       } else {
-        // Alert.alert())
         Alert.alert("Unknown error ocurred");
       }
     })

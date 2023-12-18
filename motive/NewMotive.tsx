@@ -7,10 +7,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from "../util/RootStackParams";
 import { BackButton } from "../util/BackButton";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Api from "../util/Api";
+import Api from "../util/helpers/Api";
 import { Loading } from "../util/Loading";
 import UserSelect from '../util/UserSelect'
-import MotiveHelper from "../util/MotiveHelper";
+import MotiveHelper from "../util/helpers/MotiveHelper";
 type CreateMotive = {
     title: string,
     description: string,
@@ -82,7 +82,7 @@ class NewMotive extends Component<PropType, StateType> {
         }
         else {
             this.setState({ loading: true });
-            Api.post('/motive/create', this.state.motive).then(err => {
+            Api.post('/motive/create', this.state.motive).then(res => {
                 this.setState({ loading: false });
                 this.props.navigation.goBack();
             }).catch(err => {

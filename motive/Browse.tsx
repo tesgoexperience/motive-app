@@ -2,11 +2,11 @@ import { Component } from 'react';
 
 import { ScrollView, View, Text, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
 import EventCard from './EventCard';
-import Api from '../util/Api';
+import Api from '../util/helpers/Api';
 import { Loading } from '../util/Loading'
 import { CreateStatus } from '../status/CreateStatus';
 import { Status, StatusCard } from '../status/StatusCard';
-import { Motive } from '../util/MotiveHelper';
+import { Motive } from '../util/helpers/MotiveHelper';
 
 enum VIEW {
     ALL = 'all',
@@ -42,15 +42,15 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
     getItems = (view: VIEW = VIEW.ALL) => {
         let numberOfItems: number = 4;
 
-        
-        this.setState({ loading: numberOfItems > 0, browseMotives: [],pastMotives: [], manageMotives: [], statusList: [], stats: null });
+
+        this.setState({ loading: numberOfItems > 0, browseMotives: [], pastMotives: [], manageMotives: [], statusList: [], stats: null });
 
         Api.get('/motive/' + view).then((res) => {
             numberOfItems--;
-            
+
             this.setState({ loading: numberOfItems > 0, browseMotives: res.data });
         });
- 
+
         // get the stats also
         Api.get('/motive/stats').then((statsRes) => {
             numberOfItems--;
@@ -81,7 +81,7 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
         }
     }
 
-    
+
     render() {
 
         if (this.state.loading) {
@@ -91,11 +91,11 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
         let motiveManage;
         let statusList;
         let createStatus;
-       
+
         if (this.state.view != VIEW.PAST) {
             motiveManage = this.state.manageMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={true} motive={motive} /> })
             statusList = this.state.statusList.map(status => { return <StatusCard key={status.id} navigator={this.props.navigator} status={status} /> })
-            createStatus =    <CreateStatus refresh={this.getItems} />;
+            createStatus = <CreateStatus refresh={this.getItems} />;
         }
 
         let motivesBrowse = this.state.browseMotives.map(motive => { return <EventCard openMotive={this.props.openMotive} key={motive.id} owner={false} motive={motive} /> })
@@ -104,14 +104,12 @@ class Browse extends Component<{ openMotive: (motive: Motive, owner: boolean) =>
             this.setState({ refreshingViaPulldown: true });
             this.getItems(this.state.view);
             this.setState({ refreshingViaPulldown: false });
-        }
-        
-        } />} showsVerticalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingTop: 20 }}>
+        }} />} showsVerticalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingTop: 20 }}>
             < View style={{ width: '100%', flexDirection: "row", justifyContent: 'space-between' }}>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ALL)} style={[styles.ViewButton, this.pickBorder(VIEW.ALL)]}><Text style={{ textAlign: 'center' }}>All<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.all}</Text></Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => this.changeView(VIEW.ATTENDING)} style={[styles.ViewButton, this.pickBorder(VIEW.ATTENDING)]}><Text style={{ textAlign: 'center' }}>Attending<Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.attending}</Text></Text></TouchableOpacity>
-                <TouchableOpacity  onPress={() => this.changeView(VIEW.PAST)} style={[styles.ViewButton, this.pickBorder(VIEW.PAST)]}><Text style={{ textAlign: 'center' }}>past
-                <Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.finished}</Text></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => this.changeView(VIEW.PAST)} style={[styles.ViewButton, this.pickBorder(VIEW.PAST)]}><Text style={{ textAlign: 'center' }}>past
+                    <Text style={{ color: 'red', fontWeight: 'bold' }}> • {this.state.stats?.finished}</Text></Text></TouchableOpacity>
             </View >
             {createStatus}
             {statusList}
