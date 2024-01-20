@@ -16,6 +16,5 @@ abstract class LoggableError extends Error {
 export class AuthError extends LoggableError {
     constructor(msg: string) {
         super(msg);
-
     }
 }

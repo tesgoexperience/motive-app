@@ -17,12 +17,16 @@ export default class ChatBrowseHelper {
     constructor(comp: React.Component) {
         this.comp = comp;
     }
+    
     public startListener(): void {
         this.interval = setInterval(() => {
-            Api.post('/chat/update', this.chatPreviews).then((res) => {
+            Api.post('/chat/preview/update', this.chatPreviews).then((res) => {
                if (res.data) {
                     this.initialLoad();
                }
+               console.log("Checking for up chat preview updates")
+            }).catch(err => {
+                console.log(err);
             });
         }, 2000)
     }
@@ -38,7 +42,5 @@ export default class ChatBrowseHelper {
         }).catch(err => {
             console.log(err)
         });
-    }
-    private listen(): void {
     }
 }

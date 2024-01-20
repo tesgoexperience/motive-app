@@ -7,6 +7,7 @@ export type RootStackParams = {
     NewMotive: undefined;
     ViewMotive: {owner: boolean };
     ListUsers: { users: Array<String> };
-    BrowseChat: undefined
+    BrowseChat: undefined,
+    Chat : { chatId: string, title:string }
 
 };
