@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import AuthUtils, {ResponseType, UserAuthDetails} from './AuthUtils'
 
@@ -30,9 +30,18 @@ Api.interceptors.request.use(async req => {
         req.headers.authorization = user.accessToken;
     }
 
-
     return req;
 
 });
+
+Api.interceptors.response.use(
+    response => response,
+    (error : AxiosError) => {
+        // if this user makes a request they are not authorized for, log them out as their credentials are not valid
+        if (error.response?.status == 401) {
+            AuthUtils.logout();
+        }
+    }
+)
 
 export default Api;
