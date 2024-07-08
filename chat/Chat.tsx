@@ -33,7 +33,7 @@ export class Chat extends Component<{ navigation: NativeStackNavigationProp<Root
     componentDidMount(): void {
         this.helper.loadMessages();
     }
-
+    
     componentWillUnmount(): void {
         this.helper.stopListener();
     }

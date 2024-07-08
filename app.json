@@ -2,7 +2,6 @@
   "expo": {
     "slug": "motive-app",
     "name": "motive-app",
-    "sdkVersion": "47.0.0",
     "android": {
       "package": "com.abdiidris.motiveapp"
     },
@@ -12,6 +11,7 @@
       }
     },
     "ios": {
+      "icon": "./assets/logo.png",
       "bundleIdentifier": "com.abdiidris.motiveapp"
     },
     "plugins": [
@@ -27,7 +27,8 @@
             "deploymentTarget": "15.5.99"
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   },
   "name": "motive-app"
