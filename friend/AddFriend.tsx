@@ -3,7 +3,7 @@ import { Component } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParams } from "../util/RootStackParams";
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput } from "react-native";
-import Api from "../util/Api";
+import Api from "../util/helpers/Api";
 import { Loading } from "../util/Loading";
 import FriendCard from "./FriendCard";
 import FRIEND_RELATION from "./FriendRelation";

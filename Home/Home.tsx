@@ -5,11 +5,11 @@ import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import {NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { buttonNeutral,goodBackground } from '../util/GeneralStyles';
 import { RootStackParams } from '../util/RootStackParams';
-import AuthUtils from '../util/AuthUtils';
+import AuthUtils from '../util/helpers/AuthUtils';
 import Browse from '../motive/Browse';
-import { Motive } from '../util/MotiveHelper';
+import { Motive } from '../util/helpers/MotiveHelper';
 import { Loading } from '../util/Loading';
-import Api from '../util/Api';
+import Api from '../util/helpers/Api';
 
 type PropType = {
     navigation: NativeStackNavigationProp<RootStackParams, "Home">,
@@ -48,7 +48,8 @@ class Home extends Component<PropType, StateType>{
             <View style={styles.navbar}>
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('NewMotive')} style={[buttonNeutral,goodBackground]}><Text>New Motive</Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('Friends')} style={buttonNeutral}><Text>👥 Friends</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => { AuthUtils.logout(); this.props.reauthenticateApp() }} style={[buttonNeutral]}><Text>⚙️ {this.state.username}</Text></TouchableOpacity>
+                <TouchableOpacity  onPress={() => this.props.navigation.navigate('BrowseChat')} style={[buttonNeutral]}><Text>Chat <Text style={{ color: 'red', fontWeight: 'bold' }}>• 3</Text></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { AuthUtils.logout(); this.props.reauthenticateApp() }} style={[buttonNeutral]}><Text>⚙️</Text></TouchableOpacity>
             </View>
             <Browse navigator={this.props.navigation} openMotive={this.openMotive} />
         </View>

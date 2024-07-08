@@ -1,8 +1,8 @@
 import { Component } from 'react';
 
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity} from 'react-native';
 import { Profile } from '../util/Profile';
-import MotiveHelper, { Attendance, Motive } from '../util/MotiveHelper';
+import MotiveHelper, { Attendance, Motive } from '../util/helpers/MotiveHelper';
 
 type PropType = {
     motive: Motive,

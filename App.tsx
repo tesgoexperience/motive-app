@@ -1,12 +1,12 @@
 import { Component } from 'react';
 
-import { Alert, Keyboard, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Platform, StyleSheet, TouchableWithoutFeedback, View, StatusBarStyle, StatusBar } from 'react-native';
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParams } from './util/RootStackParams';
-import AuthUtils, { ResponseType, UserAuthDetails } from './util/AuthUtils'
+import AuthUtils, { ResponseType, UserAuthDetails } from './util/helpers/AuthUtils'
 import { Loading } from './util/Loading';
 import Friend from './friend/Friend';
 import Home from './Home/Home';
@@ -16,7 +16,8 @@ import NewMotive from './motive/NewMotive';
 import ViewMotive from './motive/ViewMotive';
 // import { MenuProvider } from 'react-native-popup-menu';
 import UsersList from './util/UserList';
-
+import { Chat } from './chat/Chat';
+import { BrowseChat } from './chat/BrowseChat';
 
 const Stack = createNativeStackNavigator<RootStackParams>();
 type MyState = {
@@ -38,7 +39,18 @@ class App extends Component<{}, MyState>{
 
     state: MyState = { loading: true, userDetails: null, authenticated: false };
 
-   
+    /**
+     *
+     */
+    constructor(props : any) {
+        super(props)
+
+        // set this as the redirect page
+        AuthUtils.redirectCallBack = () => {
+            this.authenticate();
+        };
+    }
+
     public componentDidMount() {
         this.authenticate();
     }
@@ -70,8 +82,8 @@ class App extends Component<{}, MyState>{
         if (!this.state.authenticated) {
 
             show = (
-
                 <NavigationContainer independent={true}>
+                    <StatusBar barStyle={'dark-content'}/>
                     <Stack.Navigator screenOptions={{
                         headerShown: false,
                         header: () => null,
@@ -86,11 +98,10 @@ class App extends Component<{}, MyState>{
                         </Stack.Screen>
                     </Stack.Navigator>
                 </NavigationContainer>
-
-
             );
         } else {
             show = <NavigationContainer independent={true}>
+                                    <StatusBar barStyle={'dark-content'}/>
                 <Stack.Navigator screenOptions={{
                     headerShown: false,
                     header: () => null,
@@ -104,6 +115,8 @@ class App extends Component<{}, MyState>{
                     <Stack.Screen name="NewMotive" component={NewMotive} />
                     <Stack.Screen name="ViewMotive" component={ViewMotive} />
                     <Stack.Screen name="ListUsers" component={UsersList} />
+                    <Stack.Screen name="BrowseChat" component={BrowseChat} />
+                    <Stack.Screen name="Chat" component={Chat} />
                 </Stack.Navigator>
             </NavigationContainer>
 

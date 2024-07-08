@@ -1,7 +1,8 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError } from "axios";
 import { setItemAsync, deleteItemAsync, getItemAsync } from 'expo-secure-store';
-import { AuthError } from "./Errors";
+import { AuthError } from "../Errors";
 import NotificationUtil from "./NotificationUtil";
+import { Component } from "react";
 
 // For authentication of user
 export type UserAuthDetails = {
@@ -26,13 +27,18 @@ export enum ResponseType {
     NO_CREDENTIALS
 }
 
-const API_URL = process.env.REST_API;
+const API_URL = "http://192.168.0.116:8080"//process.env.REST_API;
 
 export default class AuthUtils {
 
     public static readonly USER_STORAGE_KEY = "USER";
     public static readonly AUTH_STORE_ERROR_MSG = "No user authentication is stored"
     public static readonly AUTH_STORE_MISSING_FIELDS_ERROR_MSG = "Stored user is missing fields"
+    public static readonly NO_AUTH_CALL_BACK_SET = "There is redirect call back set"
+
+    public static redirectCallBack : () => void = () =>{
+        throw new AuthError(AuthUtils.NO_AUTH_CALL_BACK_SET);
+    };
 
     // TODO getting the user from the drive every time might cause performance issues, consider a private class variable
     public static async getStoredUser(): Promise<UserAuthDetails> {
@@ -55,6 +61,7 @@ export default class AuthUtils {
 
     public static logout() {
         AuthUtils.cleanAuth();
+        this.redirectCallBack();
     }
 
     private static cleanAuth() {
@@ -63,23 +70,6 @@ export default class AuthUtils {
 
     public static setStoredUser(user: UserAuthDetails) {
         setItemAsync(AuthUtils.USER_STORAGE_KEY, JSON.stringify(user));
-    }
-
-    private static async checkTokenValidity(token: string): Promise<boolean> {
-        if (token == undefined || token == null || token == "") {
-            return false;
-        }
-
-        // check if the access token is valid
-        try {
-
-            let res = await axios.get(API_URL + '/user/', { headers: { "Authorization": token } });
-            return true;
-
-        } catch (err) {
-            AuthUtils.cleanAuth();
-            return false;
-        }
     }
 
     /**
@@ -95,47 +85,45 @@ export default class AuthUtils {
         if (user == undefined) {
             try {
                 user = await this.getStoredUser();
+
+                // if there is a user stored with a token credentials, return response okay
+                return ResponseType.OK;
+
             } catch (error) { // there is no user stored or passed in, so there is nothing to authenticate
                 return ResponseType.NO_CREDENTIALS;
             }
         }
 
-        if (! await this.checkTokenValidity(user.accessToken)) {
+        // if the method client has passed in a user with credentials, then try to login using them credentials
+        try {
 
-            try {
-
-                let res = await axios.post(API_URL + '/login', {}, {
-                    auth: {
-                        username: user.email,
-                        password: user.password
-                    }
-                });
-
-                //update the access tokens with the new info
-                user.accessToken = res.data;
-                
-                AuthUtils.setStoredUser(user);
-                // after a login, attempt to request a notification token
-                new NotificationUtil().registerForPushNotificationsAsync();
-                return ResponseType.OK;
-            }
-            catch (error: unknown) {
-                if (error instanceof AxiosError) {
-                    if (error.response?.status == 406) {
-                        return ResponseType.INVALID_CREDENTIALS;
-                    } else {
-                        return ResponseType.SERVER_ERROR;
-                    }
+            let res = await axios.post(API_URL + '/login', {}, {
+                auth: {
+                    username: user.email,
+                    password: user.password
                 }
-                else {
-                    console.log(error)
-                    return ResponseType.UNKNOWN_ERROR;
-                }
-            }
-        }
-        else {
+            });
+
+            //update the access tokens with the new info
+            user.accessToken = res.data;
+            AuthUtils.setStoredUser(user);
+            // after a login, attempt to request a notification token
+            new NotificationUtil().registerForPushNotificationsAsync();
             return ResponseType.OK;
         }
+        catch (error: unknown) {
+            if (error instanceof AxiosError) {
+                if (error.response?.status == 406) {
+                    return ResponseType.INVALID_CREDENTIALS;
+                } else {
+                    return ResponseType.SERVER_ERROR;
+                }
+            }
+            else {
+                return ResponseType.UNKNOWN_ERROR;
+            }
+        }
+
     }
 
 }

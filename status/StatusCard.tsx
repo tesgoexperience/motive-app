@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { Profile } from '../util/Profile';
 // import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import Api from '../util/Api';
+import Api from '../util/helpers/Api';
 import { colors } from '../util/Styles';
-import DateUtil from '../util/DateUtil';
+import DateUtil from '../util/helpers/DateUtil';
 
 export type Status = {
     id: number,

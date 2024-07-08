@@ -5,8 +5,10 @@ type PropType = {
     username?: String,
     imageUrl?: string,
     subtext?: string,
+    subtextSize?: number,
     size?: 0.5 | 0.75 | 1,
-    direction?: 'column' | 'row'
+    direction?: 'column' | 'row',
+    subtextColor?: string
 };
 
 export class Profile extends Component<PropType, {}>{
@@ -28,7 +30,7 @@ export class Profile extends Component<PropType, {}>{
                 <Text style={{marginStart: 5, fontSize: 20 * multiplier }} >
                     {this.props.username}
                 </Text>
-                {this.props.subtext ? <Text style={{ marginStart: 5, fontSize: 10 }} > {this.props.subtext} </Text> : <></>}
+                {this.props.subtext ? <Text style={{ marginStart: 5, fontSize: this.props.subtextSize ? this.props.subtextSize : 10 }} > {this.props.subtext} </Text> : <></>}
             </View>
         </View>
     }

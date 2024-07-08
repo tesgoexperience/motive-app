@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BackButton } from "../util/BackButton";
 import { Profile } from "../util/Profile";
 import UserListOptions from "../util/UserListOptions";
-import MotiveHelper, { Attendance } from "../util/MotiveHelper";
+import MotiveHelper, { Attendance } from "../util/helpers/MotiveHelper";
 import { Loading } from "../util/Loading";
 import { colors } from "../util/Styles"
 type PropType = {

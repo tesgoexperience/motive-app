@@ -11,7 +11,11 @@
       }
     },
     "preview": {
-      "distribution": "internal"
+      "ios": {
+        "image":"macos-ventura-13.4-xcode-14.3.1"
+      },
+      "distribution": "internal",
+      "env": {"REST_API":"http://motive-api-env.eba-dduzaswk.us-east-1.elasticbeanstalk.com"}
     },
     "production": {}
   },

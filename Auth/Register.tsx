@@ -2,10 +2,10 @@ import { Component } from 'react';
 import { TextInput, Text, View, StyleSheet, TouchableOpacity, GestureResponderEvent, ScrollView, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../util/RootStackParams';
-import Api from '../util/Api'
-import { ResponseType, UserAuthDetails } from '../util/AuthUtils'
+import Api from '../util/helpers/Api'
+import { ResponseType, UserAuthDetails } from '../util/helpers/AuthUtils'
 import { AuthError } from '../util/Errors';
-import AuthUtils from '../util/AuthUtils';
+import AuthUtils from '../util/helpers/AuthUtils';
 import { Loading } from '../util/Loading';
 import { AxiosError } from 'axios';
 import { CommonStyle } from '../util/Styles';
